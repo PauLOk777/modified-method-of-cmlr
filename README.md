@@ -1,3 +1,3 @@
-# Run application
+# Starting the application
 
-### ./mvnw spring-boot:run
+Run the next command to start Spring application: **./mvnw spring-boot:run**
