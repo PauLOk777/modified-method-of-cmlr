@@ -4,4 +4,4 @@ import java.util.List;
 
 public record ModifiedMethodOfCmlrRequestBody(
         int experimentsNumber, int initialExperimentsNumber, int validationExperimentsNumber,
-        List<Double> independentVariables, List<Double> correctCoefficients, List<List<Double>> errorsMatrix) {}
+        List<List<Double>> independentVariables, List<Double> correctCoefficients, List<List<Double>> errorsMatrix) {}

@@ -18,7 +18,6 @@ public class MultivariateLinearRegressionController {
 
     @PostMapping
     public List<Double> solveRegressionWithModifiedMethodOfCmlr(@RequestBody ModifiedMethodOfCmlrRequestBody body) {
-        System.out.println(body);
         return new ArrayList<>();
     }
 }
