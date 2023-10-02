@@ -25,6 +25,6 @@ public class RandomNumbersController {
     public List<Double> getNormallyDistributedRandomNumbers(
             @RequestBody NormallyDistributedRandomNumbersRequestBody body) {
         return randomNumbersService.generateNormallyDistributedRandomNumbers(
-                body.mean(), body.stdDev(), body.amountOfNumbers());
+                body.mean(), body.stdDev(), body.numbersAmount());
     }
 }
