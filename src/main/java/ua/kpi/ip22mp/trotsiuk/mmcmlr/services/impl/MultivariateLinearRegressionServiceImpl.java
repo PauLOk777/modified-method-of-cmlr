@@ -4,13 +4,30 @@ import org.apache.commons.math3.linear.AbstractRealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers.CombinationsGenerator;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.apache.commons.math3.linear.MatrixUtils.inverse;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.ClusterAnalysisConstants.CLUSTER_M1_MODIFIED_METHOD;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.ClusterAnalysisConstants.CLUSTER_M2_MODIFIED_METHOD;
 
 @Service
 public class MultivariateLinearRegressionServiceImpl implements MultivariateLinearRegressionService {
+
+    private static final double CLUSTER_THRESHOLD = 0.2;
+
+    private final ClusterAnalysisService clusterAnalysisService;
+
+    @Autowired
+    public MultivariateLinearRegressionServiceImpl(ClusterAnalysisService clusterAnalysisService) {
+        this.clusterAnalysisService = clusterAnalysisService;
+    }
 
     @Override
     public double[] solveRegressionWithModifiedMethodOfCmlr(
@@ -28,9 +45,17 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         AbstractRealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariablesMatrix);
         RealVector meanOfInitialDependentVariables = meanOfMatrixColumns(adjustedInitialDependentVariables);
 
-        System.out.println(dependentVariables);
-        return solveRegressionWithLeastSquaresMethod(
-                designMatrixWithAllIndependentVariables, meanOfInitialDependentVariables).toArray();
+        RealVector leastSquareMethodResults = solveRegressionWithLeastSquaresMethod(
+                designMatrixWithAllIndependentVariables, meanOfInitialDependentVariables);
+
+        List<Map<Integer, Double>> clusters = clusterAnalysisService.provideClustersByModifiedMethod(
+                leastSquareMethodResults.toArray(), CLUSTER_THRESHOLD);
+
+        List<Map<Integer, Double>> partialDescriptions =
+                CombinationsGenerator.generateCombinations(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+        partialDescriptions.forEach(map -> map.putAll(clusters.get(CLUSTER_M1_MODIFIED_METHOD)));
+
+        return null;
     }
 
     private RealVector calculateDependentVariables(
