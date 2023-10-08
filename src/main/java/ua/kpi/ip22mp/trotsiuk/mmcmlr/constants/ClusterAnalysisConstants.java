@@ -1,4 +1,4 @@
-package ua.kpi.ip22mp.trotsiuk.mmcmlr;
+package ua.kpi.ip22mp.trotsiuk.mmcmlr.constants;
 
 public final class ClusterAnalysisConstants {
 

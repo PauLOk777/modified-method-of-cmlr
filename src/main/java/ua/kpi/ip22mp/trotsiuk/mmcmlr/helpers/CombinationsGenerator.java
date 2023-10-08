@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CombinationsGenerator {
 
-    public static <K, V> List<Map<K, V>> generateCombinations(Map<K, V> map) {
+    public static <K, V> List<Map<K, V>> generateValuesCombinations(Map<K, V> map) {
         List<Map<K, V>> combinations = new ArrayList<>();
         List<K> keys = new ArrayList<>(map.keySet());
 
