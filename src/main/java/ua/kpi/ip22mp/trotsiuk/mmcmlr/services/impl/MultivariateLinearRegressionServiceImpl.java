@@ -36,7 +36,7 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
 
     @Override
     public double[] solveRegressionWithModifiedMethodOfCmlr(
-            int experimentsNumber, int initialExperimentsNumber, double[][] independentVariables,
+            int totalNumberOfExperimentsGroup, int initialNumberOfExperimentsGroup, double[][] independentVariables,
             double[] correctCoefficients, double[][] errors) {
         RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
         RealMatrix errorsMatrix = new Array2DRowRealMatrix(errors);
@@ -44,7 +44,7 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         RealVector dependentVariables =
                 calculateDependentVariables(independentVariablesMatrix, correctCoefficients);
         RealMatrix adjustedInitialDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, initialExperimentsNumber);
+                adjustDependentVariables(dependentVariables, errorsMatrix, 0, initialNumberOfExperimentsGroup);
         RealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariablesMatrix);
         RealVector meanOfInitialDependentVariables = meanOfMatrixColumns(adjustedInitialDependentVariables);
 
@@ -65,21 +65,25 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 meanOfInitialDependentVariables, designMatrixWithAllIndependentVariables.getColumnDimension());
 
         RealMatrix adjustedValidationDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, initialExperimentsNumber, experimentsNumber);
+                adjustDependentVariables(dependentVariables, errorsMatrix, initialNumberOfExperimentsGroup, totalNumberOfExperimentsGroup);
 
         RealVector residualSumOfSquares = calculateResidualSumOfSquaresForAllPartialDescriptions(partialDescriptions,
                 adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
 
         filterPartialDescriptionsByPercentageFromMinRss(partialDescriptions, residualSumOfSquares, PERCENTAGE_FROM_MIN_RSS);
+        Map<Integer, Double> resultPartialDescription =
+                getPartialDescriptionWithLowestNumberOfIndependentVariables(partialDescriptions);
         RealMatrix resultDesignMatrix =
-                getPartialDescriptionDesignMatrixWithLowestNumberOfIndependentVariables(
-                        partialDescriptions, designMatrixWithAllIndependentVariables);
+                getPartialDescriptionDesignMatrix(resultPartialDescription, designMatrixWithAllIndependentVariables);
 
         RealMatrix adjustedDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, experimentsNumber);
+                adjustDependentVariables(dependentVariables, errorsMatrix, 0, totalNumberOfExperimentsGroup);
         RealVector meanOfAllDependentVariables = meanOfMatrixColumns(adjustedDependentVariables);
 
-        return solveRegressionWithLeastSquaresMethod(resultDesignMatrix, meanOfAllDependentVariables).toArray();
+        RealVector resultCoefficients =
+                solveRegressionWithLeastSquaresMethod(resultDesignMatrix, meanOfAllDependentVariables);
+        return constructCoefficientsArrayForPartialDescription(
+                resultPartialDescription, resultCoefficients, designMatrixWithAllIndependentVariables.getColumnDimension());
     }
 
     private RealVector calculateDependentVariables(
@@ -141,14 +145,6 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 .map(partialDescription ->
                         getPartialDescriptionDesignMatrix(partialDescription, designMatrixWithAllIndependentVariables))
                 .toList();
-    }
-
-    private RealMatrix getPartialDescriptionDesignMatrixWithLowestNumberOfIndependentVariables(
-            List<Map<Integer, Double>> partialDescriptions, RealMatrix designMatrixWithAllIndependentVariables) {
-        Map<Integer, Double> partialDescription = partialDescriptions.stream()
-                .min(comparingInt(Map::size))
-                .orElse(new HashMap<>());
-        return getPartialDescriptionDesignMatrix(partialDescription, designMatrixWithAllIndependentVariables);
     }
 
     private RealMatrix getPartialDescriptionDesignMatrix(Map<Integer, Double> partialDescription,
@@ -236,5 +232,27 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 partialDescriptionsCounter++;
             }
         }
+    }
+
+    private Map<Integer, Double> getPartialDescriptionWithLowestNumberOfIndependentVariables(
+            List<Map<Integer, Double>> partialDescriptions) {
+        return partialDescriptions.stream()
+                .min(comparingInt(Map::size))
+                .orElse(new HashMap<>());
+    }
+
+    private double[] constructCoefficientsArrayForPartialDescription(
+            Map<Integer, Double> partialDescription, RealVector coefficients, int numberOfAllCoefficients) {
+        RealVector fullVectorOfCoefficients = new ArrayRealVector(numberOfAllCoefficients, 0);
+        int nonNullCoefficientsCounter = 0;
+
+        for (int i = 0; i < numberOfAllCoefficients; i++) {
+            if (partialDescription.containsKey(i)) {
+                fullVectorOfCoefficients.setEntry(i, coefficients.getEntry(nonNullCoefficientsCounter));
+                nonNullCoefficientsCounter++;
+            }
+        }
+
+        return fullVectorOfCoefficients.toArray();
     }
 }
