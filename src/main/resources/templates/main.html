@@ -2,14 +2,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modified Method Of CMLR</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Optional: Link to your CSS file -->
-    <script src="script.js"></script> <!-- Optional: Link to your JavaScript file -->
+    <title>Construction MLR</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Modified Method Of Constructing A Multivariate Linear Regression</h1>
-<main>
-    <!-- Your content goes here -->
-</main>
+    <div class="container">
+        <div class="input-group">
+            <label for="numVariables">Number of Independent Variables:</label>
+            <input type="number" id="numVariables">
+        </div>
+
+        <div class="input-group">
+            <label for="numGroups">Number of Experiment Groups:</label>
+            <input type="number" id="numGroups">
+        </div>
+
+        <div class="input-group">
+            <label for="experimentsPerGroup">Experiments in a Single Group:</label>
+            <input type="number" id="experimentsPerGroup">
+        </div>
+
+        <div class="input-group">
+            <label for="initialSteps">Initial Steps Experiment Groups:</label>
+            <input type="number" id="initialSteps">
+        </div>
+
+        <div id="coefficientsGroup" class="hidden input-group">
+            <h2>Coefficients:</h2>
+            <table id="coefficientsTable">
+            </table>
+        </div>
+
+        <div id="errorsGroup" class="hidden input-group">
+            <h2>Errors:</h2>
+            <table id="errorsTable">
+            </table>
+        </div>
+
+        <div id="independentVariablesGroup" class="hidden input-group">
+            <h2>Independent Variables:</h2>
+            <table id="independentVariablesTable">
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
