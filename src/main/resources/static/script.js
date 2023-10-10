@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isNaN(numVariables) && numVariables > 0) {
             coefficientsGroup.classList.remove("hidden");
-            coefficientsTable.innerHTML = generateMatrixTable(1, numVariables + 1, 'θ');
+            coefficientsTable.innerHTML = generateMatrixTable(1, numVariables + 1, 0, 'θ');
         } else {
             coefficientsGroup.classList.add("hidden");
             coefficientsTable.innerHTML = "";
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isNaN(numGroups) && !isNaN(experimentsPerGroup) && numGroups > 0 && experimentsPerGroup > 0) {
             errorsGroup.classList.remove("hidden");
-            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup, numGroups, 'E');
+            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup, numGroups, 1, 'E');
         } else {
             errorsGroup.classList.add("hidden");
             errorsTable.innerHTML = "";
@@ -57,18 +57,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isNaN(experimentsPerGroup) && !isNaN(numVariables) && experimentsPerGroup > 0 && numVariables > 0) {
             independentVariablesGroup.classList.remove("hidden");
-            independentVariablesTable.innerHTML = generateMatrixTable(experimentsPerGroup, numVariables, 'X');
+            independentVariablesTable.innerHTML = generateMatrixTable(experimentsPerGroup, numVariables, 1, 'X');
         } else {
             independentVariablesGroup.classList.add("hidden");
             independentVariablesTable.innerHTML = "";
         }
     }
 
-    function generateMatrixTable(rows, cols, header) {
+    function generateMatrixTable(rows, cols, startIndex, header) {
         let matrixTableHTML = "<thead><tr>";
 
         for (let i = 1; i <= cols; i++) {
-            matrixTableHTML += `<th>${header + i}</th>`;
+            matrixTableHTML += `<th>${header + startIndex++}</th>`;
         }
 
         matrixTableHTML += "</tr></thead><tbody>";
