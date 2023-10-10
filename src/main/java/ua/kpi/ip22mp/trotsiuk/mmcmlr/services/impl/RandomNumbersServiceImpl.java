@@ -18,9 +18,15 @@ public class RandomNumbersServiceImpl implements RandomNumbersService {
                 .toArray(double[][]::new);
     }
 
-    public double[] generateNormallyDistributedRandomNumbers(double mean, double stdDev, int amountOfNumbers) {
-        return DoubleStream.generate(() -> random.nextGaussian(mean, stdDev))
-                .limit(amountOfNumbers)
-                .toArray();
+    public double[][] generateMatrixOfNormallyDistributedRandomNumbers(double mean, double stdDev, int rows, int columns) {
+        double[][] matrix = new double[rows][columns];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                matrix[i][j] = random.nextGaussian(mean, stdDev);
+            }
+        }
+
+        return matrix;
     }
 }

@@ -4,5 +4,5 @@ public interface RandomNumbersService {
 
     double[][] generateRandomNumbersInMatrix(int rows, int columns, int begin, int end);
 
-    double[] generateNormallyDistributedRandomNumbers(double mean, double stdDev, int amountOfNumbers);
+    double[][] generateMatrixOfNormallyDistributedRandomNumbers(double mean, double stdDev, int rows, int columns);
 }
