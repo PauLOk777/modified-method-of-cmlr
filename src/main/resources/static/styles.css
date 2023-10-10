@@ -76,10 +76,44 @@ th, td {
     width: 100%;
     border: none;
     text-align: center;
-    font-family: 'Courier New', monospace;
 }
 
-/* Adjust input field widths for large monitors */
+.errors-generate-numbers-inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.errors-generate-numbers-inputs input[type="number"] {
+    padding: 6px 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    width: auto;
+}
+
+.errors-generate-numbers-inputs button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    width: auto;
+}
+
+.errors-generate-numbers-inputs button:hover {
+    background-color: #0056b3;
+}
+
+.hidden {
+    display: none;
+}
+
 @media (min-width: 1200px) {
     input[type="number"],
     input[type="text"]

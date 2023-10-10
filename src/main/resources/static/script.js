@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const numVariablesInput = document.getElementById("numVariables");
-    const numGroupsInput = document.getElementById("numGroups");
+    const numIndependentVariablesInput = document.getElementById("numIndependentVariables");
+    const numExperimentGroupsInput = document.getElementById("numExperimentGroups");
     const experimentsPerGroupInput = document.getElementById("experimentsPerGroup");
+    const meanInput = document.getElementById("meanInput");
+    const stdDevInput = document.getElementById("stdDevInput");
+    const generateNormallyDistributedRandomNumbersButton = document.getElementById("generateNormallyDistributedRandomNumbersButton");
 
-    numVariablesInput.addEventListener("input", showInputArrays);
-    numGroupsInput.addEventListener("input", showInputArrays);
+    numIndependentVariablesInput.addEventListener("input", showInputArrays);
+    numExperimentGroupsInput.addEventListener("input", showInputArrays);
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
+    generateNormallyDistributedRandomNumbersButton.addEventListener("click", generateNormallyDistributedRandomNumbers);
 
     function showInputArrays() {
         switch (this.id) {
-            case "numVariables":
+            case "numIndependentVariables":
                 showCoefficients();
                 showIndependentVariables();
-            case "numGroups":
+            case "numExperimentGroups":
                 showErrors()
             case "experimentsPerGroup":
                 showErrors()
@@ -21,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showCoefficients() {
-        const numVariables = parseInt(numVariablesInput.value);
+        const numIndependentVariables = parseInt(numIndependentVariablesInput.value);
         const coefficientsGroup = document.getElementById("coefficientsGroup");
         const coefficientsTable = document.getElementById("coefficientsTable");
 
-        if (!isNaN(numVariables) && numVariables > 0) {
+        if (!isNaN(numIndependentVariables) && numIndependentVariables > 0) {
             coefficientsGroup.classList.remove("hidden");
-            coefficientsTable.innerHTML = generateMatrixTable(1, numVariables + 1, 0, 'θ');
+            coefficientsTable.innerHTML = generateMatrixTable(1, numIndependentVariables + 1, 0, 'θ');
         } else {
             coefficientsGroup.classList.add("hidden");
             coefficientsTable.innerHTML = "";
@@ -35,14 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showErrors() {
-        const numGroups = parseInt(numGroupsInput.value);
+        const numExperimentGroups = parseInt(numExperimentGroupsInput.value);
         const experimentsPerGroup = parseInt(experimentsPerGroupInput.value);
         const errorsGroup = document.getElementById("errorsGroup");
         const errorsTable = document.getElementById("errorsTable");
 
-        if (!isNaN(numGroups) && !isNaN(experimentsPerGroup) && numGroups > 0 && experimentsPerGroup > 0) {
+        if (!isNaN(numExperimentGroups) && !isNaN(experimentsPerGroup) && numExperimentGroups > 0 && experimentsPerGroup > 0) {
             errorsGroup.classList.remove("hidden");
-            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup, numGroups, 1, 'E');
+            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup, numExperimentGroups, 1, 'E');
         } else {
             errorsGroup.classList.add("hidden");
             errorsTable.innerHTML = "";
@@ -51,13 +55,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showIndependentVariables() {
         const experimentsPerGroup = parseInt(experimentsPerGroupInput.value);
-        const numVariables = parseInt(numVariablesInput.value);
+        const numIndependentVariables = parseInt(numIndependentVariablesInput.value);
         const independentVariablesGroup = document.getElementById("independentVariablesGroup");
         const independentVariablesTable = document.getElementById("independentVariablesTable");
 
-        if (!isNaN(experimentsPerGroup) && !isNaN(numVariables) && experimentsPerGroup > 0 && numVariables > 0) {
+        if (!isNaN(experimentsPerGroup) && !isNaN(numIndependentVariables) && experimentsPerGroup > 0 && numIndependentVariables > 0) {
             independentVariablesGroup.classList.remove("hidden");
-            independentVariablesTable.innerHTML = generateMatrixTable(experimentsPerGroup, numVariables, 1, 'X');
+            independentVariablesTable.innerHTML = generateMatrixTable(experimentsPerGroup, numIndependentVariables, 1, 'X');
         } else {
             independentVariablesGroup.classList.add("hidden");
             independentVariablesTable.innerHTML = "";
@@ -84,5 +88,52 @@ document.addEventListener("DOMContentLoaded", function () {
         matrixTableHTML += "</tbody>";
 
         return matrixTableHTML;
+    }
+
+    function generateNormallyDistributedRandomNumbers() {
+        const mean = parseFloat(meanInput.value);
+        const stdDev = parseFloat(stdDevInput.value);
+
+        if (isNaN(mean) || isNaN(stdDev)) {
+            alert("Please enter valid mean and standard deviation values.");
+            return;
+        }
+
+        const rows = parseInt(experimentsPerGroupInput.value);
+        const columns = parseInt(numExperimentGroupsInput.value);
+
+        const requestData = { mean, stdDev, rows, columns };
+
+        fetch("/random-numbers/normal-distribution/matrix", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayMatrixInTable(data, "errorsTable");
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error generating random numbers:", error);
+            alert("An error occurred while generating random numbers.");
+        });
+    }
+
+    function displayMatrixInTable(matrix, tableId) {
+        const table = document.getElementById(tableId);
+
+        for (let i = 0; i < matrix.length; i++) {
+            const rowData = matrix[i];
+            const row = table.rows[i + 1];
+
+            for (let j = 0; j < rowData.length; j++) {
+                const cellData = rowData[j];
+                const cell = row.cells[j].querySelector(".matrix-input");
+                cell.value = cellData;
+            }
+        }
     }
 });
