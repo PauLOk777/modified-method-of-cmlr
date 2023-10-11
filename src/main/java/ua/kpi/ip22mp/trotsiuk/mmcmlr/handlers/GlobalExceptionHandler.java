@@ -12,5 +12,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SingularMatrixException.class)
     @ResponseStatus(BAD_REQUEST)
-    public void handleSingularMatrixException() {}
+    public void handleSingularMatrixException() {
+        System.out.println("Independent variables matrix is singular");
+    }
 }
