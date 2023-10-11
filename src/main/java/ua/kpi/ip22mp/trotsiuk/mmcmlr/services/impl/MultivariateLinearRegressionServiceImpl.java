@@ -10,11 +10,9 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers.CombinationsGenerator;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparingInt;
 import static org.apache.commons.math3.linear.MatrixUtils.inverse;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M1_MODIFIED_METHOD;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M2_MODIFIED_METHOD;
@@ -22,10 +20,7 @@ import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.C
 @Service
 public class MultivariateLinearRegressionServiceImpl implements MultivariateLinearRegressionService {
 
-    //TODO ask for cluster threshold
-    private static final double CLUSTER_THRESHOLD = 0.2;
-    //TODO ask for percentage from min RSS
-    private static final double PERCENTAGE_FROM_MIN_RSS = 3;
+    private static final double PERCENTAGE_FROM_MIN_RSS = 2;
 
     private final ClusterAnalysisService clusterAnalysisService;
 
@@ -51,8 +46,15 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         RealVector leastSquareMethodResults = solveRegressionWithLeastSquaresMethod(
                 designMatrixWithAllIndependentVariables, meanOfInitialDependentVariables);
 
-        List<Map<Integer, Double>> clusters = clusterAnalysisService.provideClustersByModifiedMethod(
-                leastSquareMethodResults.toArray(), CLUSTER_THRESHOLD);
+        List<Map<Integer, Double>> clusters =
+                clusterAnalysisService.provideClustersByModifiedMethod(leastSquareMethodResults.toArray());
+
+        // START DEBUGGING
+        System.out.print("Cluster M1: ");
+        System.out.println(clusters.get(CLUSTER_M1_MODIFIED_METHOD));
+        System.out.print("Cluster M2: ");
+        System.out.println(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+        // END DEBUGGING
 
         List<Map<Integer, Double>> partialDescriptions =
                 CombinationsGenerator.generateValuesCombinations(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
@@ -70,9 +72,31 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         RealVector residualSumOfSquares = calculateResidualSumOfSquaresForAllPartialDescriptions(partialDescriptions,
                 adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
 
-        filterPartialDescriptionsByPercentageFromMinRss(partialDescriptions, residualSumOfSquares, PERCENTAGE_FROM_MIN_RSS);
+        // START DEBUGGING
+        for (int i = 0; i < partialDescriptions.size(); i++) {
+            System.out.println("Partial descriptions before filtering");
+            System.out.print("Partial description " + i + ": ");
+            System.out.println(partialDescriptions.get(i));
+            System.out.print("RSS " + i + ": ");
+            System.out.println(residualSumOfSquares.getEntry(i));
+        }
+        // END DEBUGGING
+
+        residualSumOfSquares = filterPartialDescriptionsByPercentageFromMinRssAndReturnNewRssVector(
+                partialDescriptions, residualSumOfSquares);
+
+        // START DEBUGGING
+        for (int i = 0; i < partialDescriptions.size(); i++) {
+            System.out.println("Partial descriptions after filtering");
+            System.out.print("Partial description " + i + ": ");
+            System.out.println(partialDescriptions.get(i));
+            System.out.print("RSS " + i + ": ");
+            System.out.println(residualSumOfSquares.getEntry(i));
+        }
+        // END DEBUGGING
+
         Map<Integer, Double> resultPartialDescription =
-                getPartialDescriptionWithLowestNumberOfIndependentVariables(partialDescriptions);
+                getPartialDescriptionWithLowestNumberOfIndependentVariablesAndRss(partialDescriptions, residualSumOfSquares);
         RealMatrix resultDesignMatrix =
                 getPartialDescriptionDesignMatrix(resultPartialDescription, designMatrixWithAllIndependentVariables);
 
@@ -220,25 +244,50 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         return residualSumOfSquares;
     }
 
-    private void filterPartialDescriptionsByPercentageFromMinRss(List<Map<Integer, Double>> partialDescriptions,
-                                                                 RealVector residualSumOfSquares,
-                                                                 double percentageFromMinRss) {
+    private RealVector filterPartialDescriptionsByPercentageFromMinRssAndReturnNewRssVector(
+            List<Map<Integer, Double>> partialDescriptions, RealVector residualSumOfSquares) {
+        RealVector newRssVector = new ArrayRealVector();
         double minimalRss = residualSumOfSquares.getMinValue();
-        double minimalRssDeviation = percentageFromMinRss / 100;
+        double minimalRssDeviation = PERCENTAGE_FROM_MIN_RSS / 100;
         int partialDescriptionsCounter = 0;
         for (int i = 0; i < residualSumOfSquares.getDimension(); i++) {
             if (residualSumOfSquares.getEntry(i) > minimalRss + minimalRss * minimalRssDeviation) {
                 partialDescriptions.remove(i - partialDescriptionsCounter);
                 partialDescriptionsCounter++;
+            } else {
+                newRssVector = newRssVector.append(residualSumOfSquares.getEntry(i));
             }
         }
+
+        return newRssVector;
     }
 
-    private Map<Integer, Double> getPartialDescriptionWithLowestNumberOfIndependentVariables(
-            List<Map<Integer, Double>> partialDescriptions) {
-        return partialDescriptions.stream()
-                .min(comparingInt(Map::size))
-                .orElse(new HashMap<>());
+    private Map<Integer, Double> getPartialDescriptionWithLowestNumberOfIndependentVariablesAndRss(
+            List<Map<Integer, Double>> partialDescriptions, RealVector residualSumOfSquares) {
+        int minSize = partialDescriptions.stream()
+                .map(Map::size)
+                .min(Integer::compareTo)
+                .get();
+
+        double minRssValue = 0;
+        int minRssValueIndex = 0;
+
+        for (int i = 0; i < partialDescriptions.size(); i++) {
+            if (partialDescriptions.get(i).size() == minSize) {
+                minRssValue = residualSumOfSquares.getEntry(i);
+                minRssValueIndex = i;
+                break;
+            }
+        }
+
+        for (int i = 0; i < partialDescriptions.size(); i++) {
+            if (partialDescriptions.get(i).size() == minSize && minRssValue > residualSumOfSquares.getEntry(i)) {
+                minRssValue = residualSumOfSquares.getEntry(i);
+                minRssValueIndex = i;
+            }
+        }
+
+        return partialDescriptions.get(minRssValueIndex);
     }
 
     private double[] constructCoefficientsArrayForPartialDescription(

@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface ClusterAnalysisService {
 
-    List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients, double threshold);
+    List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients);
 }

@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toMap;
 public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
 
     @Override
-    public List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients, double threshold) {
+    public List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients) {
         SequencedMap<Integer, Double> coefficientsSortedByModule =
                 sortCoefficientsMapByModule(createMapWithIncrementKeys(coefficients));
 
@@ -28,7 +28,7 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
         Map.Entry<Integer, Double> lastEntry = coefficientsSortedByModule.pollLastEntry();
         m2.put(lastEntry.getKey(), lastEntry.getValue());
 
-        for (int i = 0; i < coefficientsSortedByModule.size(); i++) {
+        while (!coefficientsSortedByModule.isEmpty()) {
             double averageOfM1 = m1.values().stream().mapToDouble(aDouble -> aDouble).average().orElse(0);
             Map.Entry<Integer, Double> entry = coefficientsSortedByModule.pollFirstEntry();
             if (averageOfM1 - entry.getValue() >= entry.getValue() - lastEntry.getValue()) {
@@ -40,7 +40,6 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
             m1.put(entry.getKey(), entry.getValue());
         }
 
-        m2.entrySet().removeIf(entry -> entry.getValue() < threshold);
         return List.of(m1, m2);
     }
 

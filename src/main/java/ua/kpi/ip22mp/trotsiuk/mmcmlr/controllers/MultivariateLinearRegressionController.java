@@ -24,6 +24,7 @@ public class MultivariateLinearRegressionController {
 
     @PostMapping("/modified-method-of-cmlr")
     public double[] solveRegressionWithModifiedMethodOfCmlr(@RequestBody ModifiedMethodOfCmlrRequestBody body) {
+        System.out.println("Constructing regression model...");
         return multivariateLinearRegressionService.solveRegressionWithModifiedMethodOfCmlr(
                 body.totalNumberOfExperimentsGroup(), body.initialNumberOfExperimentsGroup(), body.independentVariables(),
                 body.correctCoefficients(), body.errors());
