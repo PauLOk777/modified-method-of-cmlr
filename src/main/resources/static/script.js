@@ -233,14 +233,21 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else if (response.status === 400) {
+                throw new Error('Independent variables matrix is singular');
+            } else {
+                throw new Error('Something went wrong on server side');
+            }
+        })
         .then(data => {
             resultsTable.innerHTML = generateMatrixTable(1, data.length, 0, 'θ', true);
             displayMatrixInTable([data], "resultsTable");
         })
         .catch(error => {
-            console.error("Error generating results:", error);
-            alert("An error occurred while generating results.");
+            alert(error);
         });
     }
 
