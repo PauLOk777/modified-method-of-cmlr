@@ -2,14 +2,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const numIndependentVariablesInput = document.getElementById("numIndependentVariables");
     const numExperimentGroupsInput = document.getElementById("numExperimentGroups");
     const experimentsPerGroupInput = document.getElementById("experimentsPerGroup");
+    const initialStepsExperimentGroupsInput = document.getElementById("initialStepsExperimentGroups");
     const meanInput = document.getElementById("meanInput");
     const stdDevInput = document.getElementById("stdDevInput");
     const generateNormallyDistributedRandomNumbersButton = document.getElementById("generateNormallyDistributedRandomNumbersButton");
+    const startRangeInput = document.getElementById("startRangeInput");
+    const endRangeInput = document.getElementById("endRangeInput");
+    const generateRandomNumbersButton = document.getElementById("generateRandomNumbersButton");
+    const startRangeInputIV = document.getElementById("startRangeInputIV");
+    const endRangeInputIV = document.getElementById("endRangeInputIV");
+    const generateRandomNumbersButtonIV = document.getElementById("generateRandomNumbersButtonIV");
+    const integerCheckbox = document.getElementById("integerCheckbox");
+    const integerCheckboxIV = document.getElementById("integerCheckboxIV");
+    const generateResultsButton = document.getElementById("generateResultsButton");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
     numExperimentGroupsInput.addEventListener("input", showInputArrays);
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
     generateNormallyDistributedRandomNumbersButton.addEventListener("click", generateNormallyDistributedRandomNumbers);
+    generateRandomNumbersButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
+    generateRandomNumbersButtonIV.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
+    generateResultsButton.addEventListener("click", generateResults);
 
     function showInputArrays() {
         switch (this.id) {
@@ -68,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function generateMatrixTable(rows, cols, startIndex, header) {
+    function generateMatrixTable(rows, cols, startIndex, header, readOnly) {
         let matrixTableHTML = "<thead><tr>";
 
         for (let i = 1; i <= cols; i++) {
@@ -80,7 +93,11 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < rows; i++) {
             matrixTableHTML += "<tr>";
             for (let j = 0; j < cols; j++) {
-                matrixTableHTML += `<td><input type="text" class="matrix-input" /></td>`;
+                if (readOnly) {
+                    matrixTableHTML += `<td><input type="text" class="matrix-output" readonly /></td>`;
+                } else {
+                    matrixTableHTML += `<td><input type="text" class="matrix-input" /></td>`;
+                }
             }
             matrixTableHTML += "</tr>";
         }
@@ -114,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(data => {
             displayMatrixInTable(data, "errorsTable");
-            console.log(data);
         })
         .catch(error => {
             console.error("Error generating random numbers:", error);
@@ -131,9 +147,133 @@ document.addEventListener("DOMContentLoaded", function () {
 
             for (let j = 0; j < rowData.length; j++) {
                 const cellData = rowData[j];
-                const cell = row.cells[j].querySelector(".matrix-input");
+                const cell = row.cells[j].querySelector("input");
                 cell.value = cellData;
             }
         }
+    }
+
+    function generateRandomNumbersInCoefficientsRange() {
+        const begin = parseFloat(startRangeInput.value);
+        const end = parseFloat(endRangeInput.value);
+
+        if (isNaN(begin) || isNaN(end)) {
+            alert("Please enter valid start and end range values.");
+            return;
+        }
+
+        const rows = 1;
+        const columns = parseInt(numIndependentVariablesInput.value) + 1;
+        const dataType = integerCheckbox.checked ? 'int' : 'double'
+
+        generateRandomNumbers(begin, end, rows, columns, dataType, "coefficientsTable");
+    }
+
+    function generateRandomNumbersInIndependentVariablesRange() {
+        const begin = parseFloat(startRangeInputIV.value);
+        const end = parseFloat(endRangeInputIV.value);
+
+        if (isNaN(begin) || isNaN(end)) {
+            alert("Please enter valid start and end range values.");
+            return;
+        }
+
+        const rows = parseInt(experimentsPerGroupInput.value);
+        const columns = parseInt(numExperimentGroupsInput.value);
+        const dataType = integerCheckboxIV.checked ? 'int' : 'double'
+
+        generateRandomNumbers(begin, end, rows, columns, dataType, "independentVariablesTable");
+    }
+
+    function generateRandomNumbers(begin, end, rows, columns, dataType, tableId) {
+        const requestData = { begin, end, rows, columns };
+        fetch(`/random-numbers/${dataType}/matrix`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            displayMatrixInTable(data, tableId);
+        })
+        .catch(error => {
+            console.error("Error generating random numbers:", error);
+            alert("An error occurred while generating random numbers.");
+        });
+    }
+
+    function generateResults() {
+        const totalNumberOfExperimentsGroup = parseInt(numExperimentGroupsInput.value);
+        const initialNumberOfExperimentsGroup = parseInt(initialStepsExperimentGroupsInput.value);
+
+        if (isNaN(totalNumberOfExperimentsGroup) || isNaN(initialNumberOfExperimentsGroup) || !validateTablesInputs()) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        const independentVariables = getDataFromTable("independentVariablesTable");
+        const correctCoefficients = getDataFromTable("coefficientsTable")[0];
+        const errors = getDataFromTable("errorsTable");
+        const resultsTable = document.getElementById("resultsTable");
+
+        const requestData = {
+            totalNumberOfExperimentsGroup,
+            initialNumberOfExperimentsGroup,
+            independentVariables,
+            correctCoefficients,
+            errors
+        };
+
+        fetch("/multivariate-linear-regression/modified-method-of-cmlr", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultsTable.innerHTML = generateMatrixTable(1, data.length, 0, 'θ', true);
+            displayMatrixInTable([data], "resultsTable");
+        })
+        .catch(error => {
+            console.error("Error generating results:", error);
+            alert("An error occurred while generating results.");
+        });
+    }
+
+    function getDataFromTable(tableId) {
+        const table = document.getElementById(tableId);
+        const data = [];
+
+        for (let i = 1; i < table.rows.length; i++) {
+            const rowData = [];
+            const row = table.rows[i];
+
+            for (let j = 0; j < row.cells.length; j++) {
+                rowData.push(parseFloat(row.cells[j].querySelector("input").value));
+            }
+
+            data.push(rowData);
+        }
+
+        return data;
+    }
+
+    function validateTablesInputs() {
+        const inputs = document.querySelectorAll('input.matrix-input');
+        for (const input of inputs) {
+            const value = input.value.trim();
+            if (value === '') {
+                return false;
+            }
+
+            if (isNaN(value)) {
+                return false;
+            }
+        }
+        return true;
     }
 });

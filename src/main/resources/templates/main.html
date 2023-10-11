@@ -31,6 +31,16 @@
             <h2>Coefficients:</h2>
             <table id="coefficientsTable">
             </table>
+            <div class="range-inputs">
+                <input type="number" id="startRangeInput" placeholder="Start Range">
+                <input type="number" id="endRangeInput" placeholder="End Range">
+                <label for="integerCheckbox">
+                    <input type="checkbox" id="integerCheckbox" /> Integer Numbers
+                </label>
+                <button id="generateRandomNumbersButton">
+                    Generate random numbers in range
+                </button>
+            </div>
         </div>
 
         <div id="errorsGroup" class="hidden input-group">
@@ -39,7 +49,7 @@
             </table>
             <div class="errors-generate-numbers-inputs">
                 <input type="number" id="meanInput" placeholder="Mean">
-                <input type="number" id="stdDevInput" placeholder="StdDev">
+                <input type="number" id="stdDevInput" placeholder="Standard Deviation">
                 <button id="generateNormallyDistributedRandomNumbersButton">
                     Generate normally distributed random numbers
                 </button>
@@ -50,6 +60,25 @@
             <h2>Independent Variables:</h2>
             <table id="independentVariablesTable">
             </table>
+            <div class="range-inputs">
+                <input type="number" id="startRangeInputIV" placeholder="Start Range">
+                <input type="number" id="endRangeInputIV" placeholder="End Range">
+                <label for="integerCheckboxIV">
+                    <input type="checkbox" id="integerCheckboxIV" /> Integer Numbers
+                </label>
+                <button id="generateRandomNumbersButtonIV">
+                    Generate random numbers in range
+                </button>
+            </div>
+        </div>
+
+        <div id="resultsGroup" class="input-group">
+            <h2>Results:</h2>
+            <table id="resultsTable">
+            </table>
+            <button id="generateResultsButton">
+                Generate results
+            </button>
         </div>
     </div>
     <script src="script.js"></script>

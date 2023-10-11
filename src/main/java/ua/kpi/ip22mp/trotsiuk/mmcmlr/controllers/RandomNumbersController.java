@@ -20,9 +20,15 @@ public class RandomNumbersController {
         this.randomNumbersService = randomNumbersService;
     }
 
-    @PostMapping("/matrix")
-    public double[][] getRandomNumbers(@RequestBody RandomNumbersRequestBody body) {
-        return randomNumbersService.generateRandomNumbersInMatrix(
+    @PostMapping("/int/matrix")
+    public int[][] getRandomIntNumbers(@RequestBody RandomNumbersRequestBody body) {
+        return randomNumbersService.generateRandomIntNumbersInMatrix(
+                body.rows(), body.columns(), body.begin(), body.end());
+    }
+
+    @PostMapping("/double/matrix")
+    public double[][] getRandomDoubleNumbers(@RequestBody RandomNumbersRequestBody body) {
+        return randomNumbersService.generateRandomDoubleNumbersInMatrix(
                 body.rows(), body.columns(), body.begin(), body.end());
     }
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.RandomNumbersService;
 
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
@@ -12,7 +13,13 @@ public class RandomNumbersServiceImpl implements RandomNumbersService {
 
     private final Random random = new Random();
 
-    public double[][] generateRandomNumbersInMatrix(int rows, int columns, int begin, int end) {
+    public int[][] generateRandomIntNumbersInMatrix(int rows, int columns, int begin, int end) {
+        return Stream.generate(() -> random.ints(columns, begin, end).toArray())
+                .limit(rows)
+                .toArray(int[][]::new);
+    }
+
+    public double[][] generateRandomDoubleNumbersInMatrix(int rows, int columns, int begin, int end) {
         return Stream.generate(() -> random.doubles(columns, begin, end).toArray())
                 .limit(rows)
                 .toArray(double[][]::new);
