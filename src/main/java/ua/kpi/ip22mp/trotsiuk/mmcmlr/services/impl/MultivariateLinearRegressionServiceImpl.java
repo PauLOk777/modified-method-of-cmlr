@@ -73,8 +73,8 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
 
         // START DEBUGGING
+        System.out.println("Partial descriptions before filtering");
         for (int i = 0; i < partialDescriptions.size(); i++) {
-            System.out.println("Partial descriptions before filtering");
             System.out.print("Partial description " + i + ": ");
             System.out.println(partialDescriptions.get(i));
             System.out.print("RSS " + i + ": ");
@@ -86,8 +86,8 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 partialDescriptions, residualSumOfSquares);
 
         // START DEBUGGING
+        System.out.println("Partial descriptions after filtering");
         for (int i = 0; i < partialDescriptions.size(); i++) {
-            System.out.println("Partial descriptions after filtering");
             System.out.print("Partial description " + i + ": ");
             System.out.println(partialDescriptions.get(i));
             System.out.print("RSS " + i + ": ");
