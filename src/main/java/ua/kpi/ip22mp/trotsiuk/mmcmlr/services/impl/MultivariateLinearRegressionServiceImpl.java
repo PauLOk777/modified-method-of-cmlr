@@ -7,6 +7,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers.CombinationsGenerator;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
@@ -24,7 +25,8 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultivariateLinearRegressionServiceImpl.class);
 
-    private static final double PERCENTAGE_FROM_MIN_RSS = 2;
+    @Value("${percentage.from.min.rss}")
+    private double percentageFromMinRss;
 
     private final ClusterAnalysisService clusterAnalysisService;
 
@@ -242,7 +244,7 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
             List<Map<Integer, Double>> partialDescriptions, RealVector residualSumOfSquares) {
         RealVector newRssVector = new ArrayRealVector();
         double minimalRss = residualSumOfSquares.getMinValue();
-        double minimalRssDeviation = PERCENTAGE_FROM_MIN_RSS / 100;
+        double minimalRssDeviation = percentageFromMinRss / 100;
         int partialDescriptionsCounter = 0;
         for (int i = 0; i < residualSumOfSquares.getDimension(); i++) {
             if (residualSumOfSquares.getEntry(i) > minimalRss + minimalRss * minimalRssDeviation) {
