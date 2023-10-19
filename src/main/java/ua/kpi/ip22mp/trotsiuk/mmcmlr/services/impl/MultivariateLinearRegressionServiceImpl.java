@@ -35,74 +35,52 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
             double[] correctCoefficients, double[][] errors) {
         RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
         RealMatrix errorsMatrix = new Array2DRowRealMatrix(errors);
-
         RealVector dependentVariables =
                 calculateDependentVariables(independentVariablesMatrix, correctCoefficients);
         RealMatrix adjustedInitialDependentVariables =
                 adjustDependentVariables(dependentVariables, errorsMatrix, 0, initialNumberOfExperimentsGroup);
+        RealMatrix adjustedValidationDependentVariables =
+                adjustDependentVariables(dependentVariables,
+                        errorsMatrix, initialNumberOfExperimentsGroup, totalNumberOfExperimentsGroup);
+        RealMatrix adjustedDependentVariables =
+                adjustDependentVariables(dependentVariables, errorsMatrix, 0, totalNumberOfExperimentsGroup);
         RealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariablesMatrix);
         RealVector meanOfInitialDependentVariables = meanOfMatrixColumns(adjustedInitialDependentVariables);
+        RealVector meanOfAllDependentVariables = meanOfMatrixColumns(adjustedDependentVariables);
 
-        RealVector leastSquareMethodResults = solveRegressionWithLeastSquaresMethod(
+        RealVector initialResults = solveRegressionWithLeastSquaresMethod(
                 designMatrixWithAllIndependentVariables, meanOfInitialDependentVariables);
-
         List<Map<Integer, Double>> clusters =
-                clusterAnalysisService.provideClustersByModifiedMethod(leastSquareMethodResults.toArray());
+                clusterAnalysisService.provideClustersByModifiedMethod(initialResults.toArray());
 
         // START DEBUGGING
-        System.out.print("Cluster M1: ");
-        System.out.println(clusters.get(CLUSTER_M1_MODIFIED_METHOD));
-        System.out.print("Cluster M2: ");
-        System.out.println(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+        displayClusters(clusters);
         // END DEBUGGING
 
-        List<Map<Integer, Double>> partialDescriptions =
-                CombinationsGenerator.generateValuesCombinations(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
-        partialDescriptions.forEach(map -> map.putAll(clusters.get(CLUSTER_M1_MODIFIED_METHOD)));
-        List<RealMatrix> partialDescriptionsDesignMatrices = getPartialDescriptionsDesignMatrices(
-                partialDescriptions, designMatrixWithAllIndependentVariables);
-
-        updatePartialDescriptionsWithCorrectCoefficients(
-                partialDescriptions, partialDescriptionsDesignMatrices,
-                meanOfInitialDependentVariables, designMatrixWithAllIndependentVariables.getColumnDimension());
-
-        RealMatrix adjustedValidationDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, initialNumberOfExperimentsGroup, totalNumberOfExperimentsGroup);
-
-        RealVector residualSumOfSquares = calculateResidualSumOfSquaresForAllPartialDescriptions(partialDescriptions,
-                adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
+        List<Map<Integer, Double>> partialDescriptions = generatePartialDescriptions(clusters,
+                meanOfInitialDependentVariables, designMatrixWithAllIndependentVariables);
+        RealVector residualSumOfSquaresForPartialDescriptions =
+                calculateResidualSumOfSquaresForAllPartialDescriptions(partialDescriptions,
+                        adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
 
         // START DEBUGGING
         System.out.println("Partial descriptions before filtering");
-        for (int i = 0; i < partialDescriptions.size(); i++) {
-            System.out.print("Partial description " + i + ": ");
-            System.out.println(partialDescriptions.get(i));
-            System.out.print("RSS " + i + ": ");
-            System.out.println(residualSumOfSquares.getEntry(i));
-        }
+        displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
         // END DEBUGGING
 
-        residualSumOfSquares = filterPartialDescriptionsByPercentageFromMinRssAndReturnNewRssVector(
-                partialDescriptions, residualSumOfSquares);
+        residualSumOfSquaresForPartialDescriptions = filterPartialDescriptionsByPercentageFromMinRssAndReturnNewRssVector(
+                partialDescriptions, residualSumOfSquaresForPartialDescriptions);
 
         // START DEBUGGING
         System.out.println("Partial descriptions after filtering");
-        for (int i = 0; i < partialDescriptions.size(); i++) {
-            System.out.print("Partial description " + i + ": ");
-            System.out.println(partialDescriptions.get(i));
-            System.out.print("RSS " + i + ": ");
-            System.out.println(residualSumOfSquares.getEntry(i));
-        }
+        displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
         // END DEBUGGING
 
         Map<Integer, Double> resultPartialDescription =
-                getPartialDescriptionWithLowestNumberOfIndependentVariablesAndRss(partialDescriptions, residualSumOfSquares);
+                getPartialDescriptionWithLowestNumberOfIndependentVariablesAndRss(
+                        partialDescriptions, residualSumOfSquaresForPartialDescriptions);
         RealMatrix resultDesignMatrix =
                 getPartialDescriptionDesignMatrix(resultPartialDescription, designMatrixWithAllIndependentVariables);
-
-        RealMatrix adjustedDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, totalNumberOfExperimentsGroup);
-        RealVector meanOfAllDependentVariables = meanOfMatrixColumns(adjustedDependentVariables);
 
         RealVector resultCoefficients =
                 solveRegressionWithLeastSquaresMethod(resultDesignMatrix, meanOfAllDependentVariables);
@@ -161,6 +139,18 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
             RealMatrix designMatrix, RealVector meanOfDependentVariables) {
         return inverse(designMatrix.transpose().multiply(designMatrix))
                 .operate(designMatrix.transpose().operate(meanOfDependentVariables));
+    }
+
+    private List<Map<Integer, Double>> generatePartialDescriptions(
+            List<Map<Integer, Double>> clusters, RealVector meanOfDependentVariables, RealMatrix designMatrix) {
+        List<Map<Integer, Double>> partialDescriptions =
+                CombinationsGenerator.generateValuesCombinations(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+        partialDescriptions.forEach(map -> map.putAll(clusters.get(CLUSTER_M1_MODIFIED_METHOD)));
+        List<RealMatrix> partialDescriptionsDesignMatrices =
+                getPartialDescriptionsDesignMatrices(partialDescriptions, designMatrix);
+        updatePartialDescriptionsWithCorrectCoefficients(partialDescriptions, partialDescriptionsDesignMatrices,
+                meanOfDependentVariables, designMatrix.getColumnDimension());
+        return partialDescriptions;
     }
 
     private List<RealMatrix> getPartialDescriptionsDesignMatrices(List<Map<Integer, Double>> partialDescriptions,
@@ -303,5 +293,22 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         }
 
         return fullVectorOfCoefficients.toArray();
+    }
+
+    private void displayClusters(List<Map<Integer, Double>> clusters) {
+        System.out.print("Cluster M1: ");
+        System.out.println(clusters.get(CLUSTER_M1_MODIFIED_METHOD));
+        System.out.print("Cluster M2: ");
+        System.out.println(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+    }
+
+    private void displayPartialDescriptionsAndTheirRss(List<Map<Integer, Double>> partialDescriptions,
+                                                       RealVector residualSumOfSquares) {
+        for (int i = 0; i < partialDescriptions.size(); i++) {
+            System.out.print("Partial description " + i + ": ");
+            System.out.println(partialDescriptions.get(i));
+            System.out.print("RSS " + i + ": ");
+            System.out.println(residualSumOfSquares.getEntry(i));
+        }
     }
 }
