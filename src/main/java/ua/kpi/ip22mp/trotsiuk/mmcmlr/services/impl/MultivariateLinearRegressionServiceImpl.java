@@ -4,6 +4,8 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers.CombinationsGenerator;
@@ -19,6 +21,8 @@ import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.C
 
 @Service
 public class MultivariateLinearRegressionServiceImpl implements MultivariateLinearRegressionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultivariateLinearRegressionServiceImpl.class);
 
     private static final double PERCENTAGE_FROM_MIN_RSS = 2;
 
@@ -53,9 +57,9 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         List<Map<Integer, Double>> clusters =
                 clusterAnalysisService.provideClustersByModifiedMethod(initialResults.toArray());
 
-        // START DEBUGGING
-        displayClusters(clusters);
-        // END DEBUGGING
+        if (LOGGER.isDebugEnabled()) {
+            displayClusters(clusters);
+        }
 
         List<Map<Integer, Double>> partialDescriptions = generatePartialDescriptions(clusters,
                 meanOfInitialDependentVariables, designMatrixWithAllIndependentVariables);
@@ -63,18 +67,18 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 calculateResidualSumOfSquaresForAllPartialDescriptions(partialDescriptions,
                         adjustedValidationDependentVariables, designMatrixWithAllIndependentVariables);
 
-        // START DEBUGGING
-        System.out.println("Partial descriptions before filtering");
-        displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
-        // END DEBUGGING
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Partial descriptions before filtering");
+            displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
+        }
 
         residualSumOfSquaresForPartialDescriptions = filterPartialDescriptionsByPercentageFromMinRssAndReturnNewRssVector(
                 partialDescriptions, residualSumOfSquaresForPartialDescriptions);
 
-        // START DEBUGGING
-        System.out.println("Partial descriptions after filtering");
-        displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
-        // END DEBUGGING
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Partial descriptions after filtering");
+            displayPartialDescriptionsAndTheirRss(partialDescriptions, residualSumOfSquaresForPartialDescriptions);
+        }
 
         Map<Integer, Double> resultPartialDescription =
                 getPartialDescriptionWithLowestNumberOfIndependentVariablesAndRss(
@@ -296,19 +300,15 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
     }
 
     private void displayClusters(List<Map<Integer, Double>> clusters) {
-        System.out.print("Cluster M1: ");
-        System.out.println(clusters.get(CLUSTER_M1_MODIFIED_METHOD));
-        System.out.print("Cluster M2: ");
-        System.out.println(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+        LOGGER.debug("Cluster M1: {}", clusters.get(CLUSTER_M1_MODIFIED_METHOD));
+        LOGGER.debug("Cluster M2: {}", clusters.get(CLUSTER_M2_MODIFIED_METHOD));
     }
 
     private void displayPartialDescriptionsAndTheirRss(List<Map<Integer, Double>> partialDescriptions,
                                                        RealVector residualSumOfSquares) {
         for (int i = 0; i < partialDescriptions.size(); i++) {
-            System.out.print("Partial description " + i + ": ");
-            System.out.println(partialDescriptions.get(i));
-            System.out.print("RSS " + i + ": ");
-            System.out.println(residualSumOfSquares.getEntry(i));
+            LOGGER.debug("Partial description {} : {}", i, partialDescriptions.get(i));
+            LOGGER.debug("RSS {}: {}", i, residualSumOfSquares.getEntry(i));
         }
     }
 }
