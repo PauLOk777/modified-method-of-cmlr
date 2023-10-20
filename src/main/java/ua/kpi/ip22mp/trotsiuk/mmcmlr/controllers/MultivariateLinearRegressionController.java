@@ -1,11 +1,12 @@
 package ua.kpi.ip22mp.trotsiuk.mmcmlr.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.models.ModifiedMethodOfCmlrRequestBody;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 
 @RestController
@@ -23,7 +24,7 @@ public class MultivariateLinearRegressionController {
     }
 
     @PostMapping("/modified-method-of-cmlr")
-    public double[] solveRegressionWithModifiedMethodOfCmlr(@RequestBody ModifiedMethodOfCmlrRequestBody body) {
+    public double[] solveRegressionWithModifiedMethodOfCmlr(@Valid @RequestBody ModifiedMethodOfCmlrRequestBody body) {
         return multivariateLinearRegressionService.solveRegressionWithModifiedMethodOfCmlr(
                 body.totalNumberOfExperimentsGroup(), body.initialNumberOfExperimentsGroup(), body.independentVariables(),
                 body.correctCoefficients(), body.errors());
