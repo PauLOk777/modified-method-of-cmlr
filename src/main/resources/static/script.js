@@ -164,10 +164,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function generateRandomNumbersInCoefficientsRange() {
-        const begin = parseFloat(startRangeInput.value);
+        const start = parseFloat(startRangeInput.value);
         const end = parseFloat(endRangeInput.value);
 
-        if (isNaN(begin) || isNaN(end)) {
+        if (isNaN(start) || isNaN(end)) {
             alert("Please enter valid start and end range values.");
             return;
         }
@@ -176,14 +176,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const columns = parseInt(numIndependentVariablesInput.value) + 1;
         const dataType = integerCheckbox.checked ? 'int' : 'double'
 
-        generateRandomNumbers(begin, end, rows, columns, dataType, "coefficientsTable");
+        generateRandomNumbers(start, end, rows, columns, dataType, "coefficientsTable");
     }
 
     function generateRandomNumbersInIndependentVariablesRange() {
-        const begin = parseFloat(startRangeInputIV.value);
+        const start = parseFloat(startRangeInputIV.value);
         const end = parseFloat(endRangeInputIV.value);
 
-        if (isNaN(begin) || isNaN(end)) {
+        if (isNaN(start) || isNaN(end)) {
             alert("Please enter valid start and end range values.");
             return;
         }
@@ -192,11 +192,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const columns = parseInt(numIndependentVariablesInput.value);
         const dataType = integerCheckboxIV.checked ? 'int' : 'double'
 
-        generateRandomNumbers(begin, end, rows, columns, dataType, "independentVariablesTable");
+        generateRandomNumbers(start, end, rows, columns, dataType, "independentVariablesTable");
     }
 
-    function generateRandomNumbers(begin, end, rows, columns, dataType, tableId) {
-        const requestData = { begin, end, rows, columns };
+    function generateRandomNumbers(start, end, rows, columns, dataType, tableId) {
+        const requestData = {
+            range: { start, end },
+            rows,
+            columns
+        };
         fetch(`/random-numbers/${dataType}/matrix`, {
             method: "POST",
             headers: {

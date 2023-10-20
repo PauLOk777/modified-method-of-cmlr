@@ -2,14 +2,19 @@ package ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.DoubleRandomNumbersRequestBody;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.util.DoubleRange;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.constraints.DoubleRealRange;
 
-public class DoubleRealRangeValidator implements ConstraintValidator<DoubleRealRange, DoubleRandomNumbersRequestBody> {
+import static java.util.Objects.isNull;
+
+public class DoubleRealRangeValidator implements ConstraintValidator<DoubleRealRange, DoubleRange> {
 
     @Override
-    public boolean isValid(DoubleRandomNumbersRequestBody doubleRandomNumbersRequestBody,
-                           ConstraintValidatorContext constraintValidatorContext) {
-        return doubleRandomNumbersRequestBody.begin() < doubleRandomNumbersRequestBody.end();
+    public boolean isValid(DoubleRange range, ConstraintValidatorContext constraintValidatorContext) {
+        if (isNull(range)) {
+            return true;
+        }
+
+        return range.start() < range.end();
     }
 }
