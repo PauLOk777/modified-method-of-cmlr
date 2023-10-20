@@ -128,9 +128,19 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 200 || response.status === 400) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong on server side');
+            }
+        })
         .then(data => {
-            displayMatrixInTable(data, "errorsTable");
+            if (Array.isArray(data)) {
+                displayMatrixInTable(data, "errorsTable");
+            } else {
+                handleBadRequestErrors(data);
+            }
         })
         .catch(error => {
             console.error("Error generating random numbers:", error);
@@ -179,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const rows = parseInt(experimentsPerGroupInput.value);
-        const columns = parseInt(numExperimentGroupsInput.value);
+        const columns = parseInt(numIndependentVariablesInput.value);
         const dataType = integerCheckboxIV.checked ? 'int' : 'double'
 
         generateRandomNumbers(begin, end, rows, columns, dataType, "independentVariablesTable");
@@ -194,9 +204,19 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 200 || response.status === 400) {
+                return response.json();
+            } else {
+                throw new Error('Something went wrong on server side');
+            }
+        })
         .then(data => {
-            displayMatrixInTable(data, tableId);
+            if (Array.isArray(data)) {
+                displayMatrixInTable(data, tableId);
+            } else {
+                handleBadRequestErrors(data);
+            }
         })
         .catch(error => {
             console.error("Error generating random numbers:", error);
@@ -234,21 +254,33 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify(requestData)
         })
         .then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 400) {
                 return response.json();
-            } else if (response.status === 400) {
-                throw new Error('Independent variables matrix is singular');
             } else {
                 throw new Error('Something went wrong on server side');
             }
         })
         .then(data => {
-            resultsTable.innerHTML = generateMatrixTable(1, data.length, 0, 'θ', true);
-            displayMatrixInTable([data], "resultsTable");
+            if (Array.isArray(data)) {
+                resultsTable.innerHTML = generateMatrixTable(1, data.length, 0, 'θ', true);
+                displayMatrixInTable([data], "resultsTable");
+            } else {
+                handleBadRequestErrors(data);
+            }
         })
         .catch(error => {
-            alert(error);
+            console.error(error);
         });
+    }
+
+    function handleBadRequestErrors(data) {
+        if (data.globalErrors && data.globalErrors.length) {
+            alert('Global Errors:\n' + data.globalErrors.join('\n'));
+        }
+
+        if (data.fieldErrors && data.fieldErrors.length) {
+            alert('Field Errors:\n' + data.fieldErrors.join('\n'));
+        }
     }
 
     function getDataFromTable(tableId) {
