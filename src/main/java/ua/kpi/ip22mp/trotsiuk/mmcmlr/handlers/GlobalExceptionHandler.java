@@ -4,7 +4,6 @@ import org.apache.commons.math3.linear.SingularMatrixException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,11 +16,14 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final String EMPTY = "";
     private static final String BINDING_ERROR_JOINER = ": ";
     private static final String SINGULAR_MATRIX_EXCEPTION_MESSAGE_KEY =
             "independent.variables.singular.matrix.exception";
@@ -52,8 +54,14 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ExceptionDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<String> globalErrors = ex.getGlobalErrors().stream()
-                .map(ObjectError::getDefaultMessage)
-                .filter(Objects::nonNull)
+                .filter(objectError -> nonNull(objectError.getCode()))
+                .map(objectError -> {
+                    if (isNull(objectError.getDefaultMessage())) {
+                        return messageSource.getMessage(
+                                objectError.getCode(), null, EMPTY, LocaleContextHolder.getLocale());
+                    }
+                    return objectError.getDefaultMessage();
+                })
                 .toList();
 
         List<String> fieldErrors = ex.getFieldErrors().stream()
