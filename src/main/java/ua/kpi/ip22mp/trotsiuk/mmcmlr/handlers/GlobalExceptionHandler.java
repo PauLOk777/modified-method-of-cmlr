@@ -24,7 +24,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class GlobalExceptionHandler {
 
     private static final String EMPTY = "";
-    private static final String BINDING_ERROR_JOINER = ": ";
     private static final String SINGULAR_MATRIX_EXCEPTION_MESSAGE_KEY =
             "independent.variables.singular.matrix.exception";
 

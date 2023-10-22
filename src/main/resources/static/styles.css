@@ -146,6 +146,12 @@ th, td {
     display: none;
 }
 
+.width-limited {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media (min-width: 1200px) {
     input[type="number"],
     input[type="text"]
