@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.validators.ModifiedMethodOfCmlrRequestBodyValidator;
 
 @RestController
 @RequestMapping("/multivariate-linear-regression")
