@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const integerCheckbox = document.getElementById("integerCheckbox");
     const integerCheckboxIV = document.getElementById("integerCheckboxIV");
     const generateResultsButton = document.getElementById("generateResultsButton");
+    const fullScreenToggle = document.getElementById("fullScreenToggle");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
     numExperimentGroupsInput.addEventListener("input", showInputArrays);
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     generateRandomNumbersButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
     generateRandomNumbersButtonIV.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
     generateResultsButton.addEventListener("click", generateResults);
+    fullScreenToggle.addEventListener("change", toggleFullScreen);
 
     function showInputArrays() {
         switch (this.id) {
@@ -233,7 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const initialNumberOfExperimentsGroup = parseInt(initialStepsExperimentGroupsInput.value);
 
         if (isNaN(totalNumberOfExperimentsGroup) || isNaN(initialNumberOfExperimentsGroup) || !validateTablesInputs()) {
-            alert('Please fill in all fields.');
+            alert('Please fill in check for correctness all fields.');
             return;
         }
 
@@ -318,5 +320,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         return true;
+    }
+
+    function toggleFullScreen() {
+        if (this.checked) {
+            document.querySelector(".container").style.maxWidth = screen.width;
+        } else {
+            document.querySelector(".container").style.maxWidth = "800px";
+        }
     }
 });
