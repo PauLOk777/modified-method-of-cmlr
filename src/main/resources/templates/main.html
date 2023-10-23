@@ -15,22 +15,22 @@
         <div class="width-limited">
             <div class="input-group">
                 <label for="numIndependentVariables">Number of Independent Variables:</label>
-                <input type="number" id="numIndependentVariables">
+                <input type="number" id="numIndependentVariables" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
             <div class="input-group">
                 <label for="numExperimentGroups">Number of Experiment Groups:</label>
-                <input type="number" id="numExperimentGroups">
+                <input type="number" id="numExperimentGroups" placeholder="Enter a number from 2 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
             <div class="input-group">
                 <label for="experimentsPerGroup">Experiments in a Single Group:</label>
-                <input type="number" id="experimentsPerGroup">
+                <input type="number" id="experimentsPerGroup" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
             <div class="input-group">
                 <label for="initialStepsExperimentGroups">Experiment Groups for Initial Steps:</label>
-                <input type="number" id="initialStepsExperimentGroups">
+                <input type="number" id="initialStepsExperimentGroups" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
         </div>
 

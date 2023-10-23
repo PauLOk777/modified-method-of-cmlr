@@ -330,3 +330,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+function validateNumberInput(field, event) {
+    if (event.code === "Backspace" || event.code === "Tab") {
+        return;
+    }
+
+    const min = field.getAttribute("min") ? +field.getAttribute("min") : Number.MIN_VALUE;
+    const max = field.getAttribute("max") ? +field.getAttribute("max") : Number.MAX_VALUE;
+    const value = field.value + event.key;
+
+    if (isNaN(value) || value < min || value > max) {
+        event.preventDefault();
+    }
+}
