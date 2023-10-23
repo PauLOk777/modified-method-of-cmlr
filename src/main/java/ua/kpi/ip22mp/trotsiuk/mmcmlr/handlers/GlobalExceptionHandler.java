@@ -3,6 +3,7 @@ package ua.kpi.ip22mp.trotsiuk.mmcmlr.handlers;
 import org.apache.commons.math3.linear.SingularMatrixException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,6 +53,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public ExceptionDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return handleBindException(ex);
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(BAD_REQUEST)
+    @ResponseBody
+    public ExceptionDto handleBindException(BindException ex) {
         List<String> globalErrors = ex.getGlobalErrors().stream()
                 .filter(objectError -> nonNull(objectError.getCode()))
                 .map(objectError -> {

@@ -1,5 +1,6 @@
 package ua.kpi.ip22mp.trotsiuk.mmcmlr.services.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
 
@@ -14,6 +15,9 @@ import static java.util.stream.Collectors.toMap;
 
 @Service
 public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
+
+    @Value("${max.number.of.elements.in.m2.cluster}")
+    private int maxNumberOfElementsInM2Cluster;
 
     @Override
     public List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients) {
@@ -38,6 +42,13 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
             }
 
             m1.put(entry.getKey(), entry.getValue());
+        }
+
+        if (m2.size() > maxNumberOfElementsInM2Cluster) {
+            m2 = m2.entrySet().stream()
+                    .sorted(comparingDouble(entry -> -Math.abs(entry.getValue())))
+                    .limit(maxNumberOfElementsInM2Cluster)
+                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, HashMap::new));
         }
 
         return List.of(m1, m2);

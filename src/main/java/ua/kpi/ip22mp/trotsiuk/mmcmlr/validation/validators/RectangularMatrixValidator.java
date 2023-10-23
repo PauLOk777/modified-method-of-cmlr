@@ -8,7 +8,7 @@ public class RectangularMatrixValidator implements ConstraintValidator<Rectangul
 
     @Override
     public boolean isValid(double[][] matrix, ConstraintValidatorContext constraintValidatorContext) {
-        if (matrix == null || matrix.length == 0) {
+        if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) {
             return true;
         }
 
