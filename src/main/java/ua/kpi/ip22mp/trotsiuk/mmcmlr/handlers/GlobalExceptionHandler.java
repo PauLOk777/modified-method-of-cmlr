@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.ExceptionDto;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.BadRequestExceptionDto;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,29 +37,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SingularMatrixException.class)
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
-    public ExceptionDto handleSingularMatrixException() {
-        return new ExceptionDto(singletonList(messageSource.getMessage(
-                SINGULAR_MATRIX_EXCEPTION_MESSAGE_KEY, null, LocaleContextHolder.getLocale())), null);
+    public BadRequestExceptionDto handleSingularMatrixException() {
+        return new BadRequestExceptionDto(null, singletonList(messageSource.getMessage(
+                SINGULAR_MATRIX_EXCEPTION_MESSAGE_KEY, null, LocaleContextHolder.getLocale())));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
-    public ExceptionDto handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return new ExceptionDto(singletonList(ex.getMessage()), null);
+    public BadRequestExceptionDto handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return new BadRequestExceptionDto(singletonList(ex.getMessage()), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
-    public ExceptionDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public BadRequestExceptionDto handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         return handleBindException(ex);
     }
 
     @ExceptionHandler(BindException.class)
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
-    public ExceptionDto handleBindException(BindException ex) {
+    public BadRequestExceptionDto handleBindException(BindException ex) {
         List<String> globalErrors = ex.getGlobalErrors().stream()
                 .filter(objectError -> nonNull(objectError.getCode()))
                 .map(objectError -> {
@@ -76,6 +76,6 @@ public class GlobalExceptionHandler {
                 .filter(Objects::nonNull)
                 .toList();
 
-        return new ExceptionDto(globalErrors, fieldErrors);
+        return new BadRequestExceptionDto(globalErrors, fieldErrors);
     }
 }
