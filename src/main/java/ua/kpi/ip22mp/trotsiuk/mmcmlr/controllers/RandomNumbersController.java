@@ -23,13 +23,13 @@ public class RandomNumbersController {
     }
 
     @PostMapping("/int/matrix")
-    public int[][] getRandomIntNumbers(@Valid @RequestBody IntRandomNumbersRequestBody body) {
+    public int[][] getMatrixOfRandomIntNumbers(@Valid @RequestBody IntRandomNumbersRequestBody body) {
         return randomNumbersService.generateRandomIntNumbersInMatrix(
                 body.rows(), body.columns(), body.range().start(), body.range().end());
     }
 
     @PostMapping("/double/matrix")
-    public double[][] getRandomDoubleNumbers(@Valid @RequestBody DoubleRandomNumbersRequestBody body) {
+    public double[][] getMatrixOfRandomDoubleNumbers(@Valid @RequestBody DoubleRandomNumbersRequestBody body) {
         return randomNumbersService.generateRandomDoubleNumbersInMatrix(
                 body.rows(), body.columns(), body.range().start(), body.range().end());
     }
