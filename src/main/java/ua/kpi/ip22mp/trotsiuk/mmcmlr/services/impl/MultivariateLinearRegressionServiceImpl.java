@@ -283,6 +283,11 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
             }
         }
 
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Result Partial description : {}", partialDescriptions.get(minRssValueIndex));
+            LOGGER.debug("Result RSS: {}", residualSumOfSquares.getEntry(minRssValueIndex));
+        }
+
         return partialDescriptions.get(minRssValueIndex);
     }
 
