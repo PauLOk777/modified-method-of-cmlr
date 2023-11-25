@@ -14,7 +14,7 @@
 
         <div class="width-limited">
             <div class="input-group">
-                <label for="numIndependentVariables">Number Of Independent Variables</label>
+                <label for="numIndependentVariables">Number of Independent Variables</label>
                 <input type="number" id="numIndependentVariables" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
@@ -40,8 +40,8 @@
             <table id="coefficientsTable">
             </table>
             <div class="range-inputs width-limited">
-                <input type="number" id="startRangeInput" placeholder="Start Range">
-                <input type="number" id="endRangeInput" placeholder="End Range">
+                <input type="number" id="startRangeInput" placeholder="Start Range (inclusively)">
+                <input type="number" id="endRangeInput" placeholder="End Range (exclusively)">
                 <label for="integerCheckbox">
                     <input type="checkbox" id="integerCheckbox" /> Integer Numbers
                 </label>
@@ -56,8 +56,8 @@
             <table id="independentVariablesTable">
             </table>
             <div class="range-inputs width-limited">
-                <input type="number" id="startRangeInputIV" placeholder="Start Range">
-                <input type="number" id="endRangeInputIV" placeholder="End Range">
+                <input type="number" id="startRangeInputIV" placeholder="Start Range (inclusively)">
+                <input type="number" id="endRangeInputIV" placeholder="End Range (exclusively)">
                 <label for="integerCheckboxIV">
                     <input type="checkbox" id="integerCheckboxIV" /> Integer Numbers
                 </label>
