@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const integerCheckboxIV = document.getElementById("integerCheckboxIV");
     const generateResultsButton = document.getElementById("generateResultsButton");
     const fullScreenToggle = document.getElementById("fullScreenToggle");
+    const comparisonValueByPavlovSpan = document.getElementById("comparisonValueByPavlov");
+    const numberOfInitialZeroCoefficientsSpan = document.getElementById("numberOfInitialZeroCoefficients");
+    const numberOfCalculatedZeroCoefficientsSpan = document.getElementById("numberOfCalculatedZeroCoefficients");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
     numExperimentGroupsInput.addEventListener("input", showInputArrays);
@@ -267,9 +270,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
         .then(data => {
-            if (Array.isArray(data)) {
-                resultsTable.innerHTML = generateMatrixTable(1, data.length, 0, 'θ', true);
-                displayMatrixInTable([data], "resultsTable");
+            if (data.coefficients) {
+                resultsTable.innerHTML = generateMatrixTable(1, data.coefficients.length, 0, 'θ', true);
+                displayMatrixInTable([data.coefficients], "resultsTable");
+                comparisonValueByPavlovSpan.innerHTML = data.comparisonValueByPavlov;
+                numberOfInitialZeroCoefficientsSpan.innerHTML = data.numberOfInitialZeroCoefficients;
+                numberOfCalculatedZeroCoefficientsSpan.innerHTML = data.numberOfCalculatedZeroCoefficients;
+                document.getElementById("resultsGroup").classList.remove("hidden");
+                window.scrollTo(0, document.body.scrollHeight);
             } else {
                 handleBadRequestErrors(data);
             }

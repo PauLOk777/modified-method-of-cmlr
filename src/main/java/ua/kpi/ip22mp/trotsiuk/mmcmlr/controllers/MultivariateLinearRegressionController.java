@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationDto;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 
@@ -29,8 +30,8 @@ public class MultivariateLinearRegressionController {
     }
 
     @PostMapping("/modified-method-of-cmlr")
-    public double[] solveRegressionWithModifiedMethodOfCmlr(@Valid @RequestBody ModifiedMethodOfCmlrRequestBody body,
-                                                            BindingResult bindingResult) throws BindException {
+    public RegressionCalculationDto solveRegressionWithModifiedMethodOfCmlr(@Valid @RequestBody ModifiedMethodOfCmlrRequestBody body,
+                                                                            BindingResult bindingResult) throws BindException {
         modifiedMethodOfCmlrRequestBodyValidator.validate(body, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
