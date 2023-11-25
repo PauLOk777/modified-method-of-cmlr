@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     const numIndependentVariablesInput = document.getElementById("numIndependentVariables");
-    const numExperimentGroupsInput = document.getElementById("numExperimentGroups");
     const experimentsPerGroupInput = document.getElementById("experimentsPerGroup");
-    const initialStepsExperimentGroupsInput = document.getElementById("initialStepsExperimentGroups");
+    const repetitionsNumberOfActiveExperimentsInput = document.getElementById("repetitionsNumberOfActiveExperiments");
+    const numberOfValidationSequencesInput = document.getElementById("numberOfValidationSequences");
     const meanInput = document.getElementById("meanInput");
     const stdDevInput = document.getElementById("stdDevInput");
     const generateNormallyDistributedRandomNumbersButton = document.getElementById("generateNormallyDistributedRandomNumbersButton");
@@ -21,8 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const numberOfCalculatedZeroCoefficientsSpan = document.getElementById("numberOfCalculatedZeroCoefficients");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
-    numExperimentGroupsInput.addEventListener("input", showInputArrays);
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
+    repetitionsNumberOfActiveExperimentsInput.addEventListener("input", showInputArrays);
+    numberOfValidationSequencesInput.addEventListener("input", showInputArrays);
     generateNormallyDistributedRandomNumbersButton.addEventListener("click", generateNormallyDistributedRandomNumbers);
     generateRandomNumbersButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
     generateRandomNumbersButtonIV.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
@@ -34,11 +35,13 @@ document.addEventListener("DOMContentLoaded", function () {
             case "numIndependentVariables":
                 showCoefficients();
                 showIndependentVariables();
-            case "numExperimentGroups":
-                showErrors()
             case "experimentsPerGroup":
-                showErrors()
+                showErrorsMatrix()
                 showIndependentVariables();
+            case "repetitionsNumberOfActiveExperiments":
+                showErrorsMatrix();
+            case "numberOfValidationSequences":
+                showErrorsMatrix();
         }
     }
 
@@ -56,15 +59,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function showErrors() {
-        const numExperimentGroups = parseInt(numExperimentGroupsInput.value);
+    function showErrorsMatrix() {
+        const repetitionsNumberOfActiveExperiments = parseInt(repetitionsNumberOfActiveExperimentsInput.value);
+        const numberOfValidationSequences = parseInt(numberOfValidationSequencesInput.value);
         const experimentsPerGroup = parseInt(experimentsPerGroupInput.value);
         const errorsGroup = document.getElementById("errorsGroup");
         const errorsTable = document.getElementById("errorsTable");
 
-        if (!isNaN(numExperimentGroups) && !isNaN(experimentsPerGroup) && numExperimentGroups > 0 && experimentsPerGroup > 0) {
+        if (!isNaN(repetitionsNumberOfActiveExperiments) && !isNaN(numberOfValidationSequences) &&
+             !isNaN(experimentsPerGroup) && repetitionsNumberOfActiveExperiments > 0 &&
+             numberOfValidationSequences > 0 && experimentsPerGroup > 0) {
             errorsGroup.classList.remove("hidden");
-            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup, numExperimentGroups, 1, 'E');
+            errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup,
+                    repetitionsNumberOfActiveExperiments + numberOfValidationSequences, 1, 'E');
         } else {
             errorsGroup.classList.add("hidden");
             errorsTable.innerHTML = "";
@@ -122,7 +129,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const rows = parseInt(experimentsPerGroupInput.value);
-        const columns = parseInt(numExperimentGroupsInput.value);
+        const columns = parseInt(repetitionsNumberOfActiveExperimentsInput.value) +
+                parseInt(numberOfValidationSequencesInput.value);
 
         const requestData = { mean, stdDev, rows, columns };
 
@@ -234,10 +242,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function generateResults() {
-        const totalNumberOfExperimentsGroup = parseInt(numExperimentGroupsInput.value);
-        const initialNumberOfExperimentsGroup = parseInt(initialStepsExperimentGroupsInput.value);
+        const repetitionsNumberOfActiveExperiments = parseInt(repetitionsNumberOfActiveExperimentsInput.value);
+        const numberOfValidationSequences = parseInt(numberOfValidationSequencesInput.value);
 
-        if (isNaN(totalNumberOfExperimentsGroup) || isNaN(initialNumberOfExperimentsGroup) || !validateTablesInputs()) {
+        if (isNaN(repetitionsNumberOfActiveExperiments) || isNaN(numberOfValidationSequences) || !validateTablesInputs()) {
             alert('Please fill in check for correctness all fields.');
             return;
         }
@@ -248,8 +256,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const resultsTable = document.getElementById("resultsTable");
 
         const requestData = {
-            totalNumberOfExperimentsGroup,
-            initialNumberOfExperimentsGroup,
+            repetitionsNumberOfActiveExperiments,
+            numberOfValidationSequences,
             independentVariables,
             correctCoefficients,
             errors

@@ -8,18 +8,18 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.constraints.NotEmptyMatrix;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.constraints.RectangularMatrix;
 
 public record ModifiedMethodOfCmlrRequestBody(
-        @Min(value = 2, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.totalNumberOfExperimentsGroup.Min}")
-        @Max(value = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.totalNumberOfExperimentsGroup.Max}")
-        int totalNumberOfExperimentsGroup,
-        @Min(value = 1, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.initialNumberOfExperimentsGroup.Min}")
-        @Max(value = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.initialNumberOfExperimentsGroup.Max}")
-        int initialNumberOfExperimentsGroup,
+        @Min(value = 1, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.repetitionsNumberOfActiveExperiments.Min}")
+        @Max(value = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.repetitionsNumberOfActiveExperiments.Max}")
+        int repetitionsNumberOfActiveExperiments,
+        @Min(value = 1, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.numberOfValidationSequences.Min}")
+        @Max(value = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.numberOfValidationSequences.Max}")
+        int numberOfValidationSequences,
+        @Size(min = 1, max = 101, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.correctCoefficients.Size}")
+        double[] correctCoefficients,
         @NotEmptyMatrix(message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.independentVariables.NotEmptyMatrix}")
         @RectangularMatrix(message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.independentVariables.RectangularMatrix}")
         @MatrixSize(maxRows = 100, maxColumns = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.independentVariables.MatrixSize}")
         double[][] independentVariables,
-        @Size(min = 1, max = 101, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.correctCoefficients.Size}")
-        double[] correctCoefficients,
         @NotEmptyMatrix(message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.errors.NotEmptyMatrix}")
         @RectangularMatrix(message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.errors.RectangularMatrix}")
         @MatrixSize(maxRows = 100, maxColumns = 100, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.errors.MatrixSize}")

@@ -145,21 +145,21 @@ components:
       type: object
       description: Request body for constructing multivariate linear regression based on correct coefficients
       required:
-        - totalNumberOfExperimentsGroup
-        - initialNumberOfExperimentsGroup
+        - repetitionsNumberOfActiveExperiments
+        - numberOfValidationSequences
         - independentVariables
         - correctCoefficients
         - errors
       properties:
-        totalNumberOfExperimentsGroup:
-          type: integer
-          minimum: 2
-          description: Total number of experiments group
-          example: 4
-        initialNumberOfExperimentsGroup:
+        repetitionsNumberOfActiveExperiments:
           type: integer
           minimum: 1
-          description: Initial number of experiments group
+          description: Repetitions Number of Active Experiments
+          example: 2
+        numberOfValidationSequences:
+          type: integer
+          minimum: 1
+          description: Number of validation sequences
           example: 2
         independentVariables:
           type: array
@@ -222,7 +222,7 @@ components:
           type: array
           items:
             type: string
-            example: Total number of experiments group should be greater than number of initial groups
+            example: Errors rows number should be equal to independent variables rows number
           description: Errors based on multiple fields
         fieldErrors:
           type: array

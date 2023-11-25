@@ -8,8 +8,6 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody;
 @Component
 public class ModifiedMethodOfCmlrRequestBodyValidator implements Validator {
 
-    private static final String TOTAL_NUMBER_OF_EXPERIMENTS_GROUP_SHOULD_BE_GREATER_THAN_NUMBER_OF_INITIAL_GROUPS =
-            "total.number.of.experiments.group.should.be.greater.than.number.of.initial.groups";
     private static final String NUMBER_OF_COEFFICIENTS_SHOULD_BE_EQUAL_TO_NUMBER_OF_INDEPENDENT_VARIABLES_PLUS_ONE =
             "number.of.coefficients.should.be.equal.to.number.of.independent.variables.plus.one";
     private static final String ERRORS_ROWS_NUMBER_SHOULD_BE_EQUAL_TO_INDEPENDENT_VARIABLES_ROWS_NUMBER =
@@ -26,10 +24,6 @@ public class ModifiedMethodOfCmlrRequestBodyValidator implements Validator {
     public void validate(Object target, Errors errors) {
         ModifiedMethodOfCmlrRequestBody requestBody = (ModifiedMethodOfCmlrRequestBody) target;
 
-        if (requestBody.totalNumberOfExperimentsGroup() <= requestBody.initialNumberOfExperimentsGroup()) {
-            errors.reject(TOTAL_NUMBER_OF_EXPERIMENTS_GROUP_SHOULD_BE_GREATER_THAN_NUMBER_OF_INITIAL_GROUPS);
-        }
-
         if (requestBody.correctCoefficients().length != requestBody.independentVariables()[0].length + 1) {
             errors.reject(NUMBER_OF_COEFFICIENTS_SHOULD_BE_EQUAL_TO_NUMBER_OF_INDEPENDENT_VARIABLES_PLUS_ONE);
         }
@@ -38,7 +32,8 @@ public class ModifiedMethodOfCmlrRequestBodyValidator implements Validator {
             errors.reject(ERRORS_ROWS_NUMBER_SHOULD_BE_EQUAL_TO_INDEPENDENT_VARIABLES_ROWS_NUMBER);
         }
 
-        if (requestBody.errors()[0].length != requestBody.totalNumberOfExperimentsGroup()) {
+        if (requestBody.errors()[0].length !=
+                requestBody.repetitionsNumberOfActiveExperiments() + requestBody.numberOfValidationSequences()) {
             errors.reject(ERRORS_ROW_SIZE_SHOULD_BE_EQUAL_TO_TOTAL_NUMBER_OF_EXPERIMENTS_GROUP);
         }
     }

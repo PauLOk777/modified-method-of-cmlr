@@ -40,19 +40,20 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
 
     @Override
     public RegressionCalculationDto solveRegressionWithModifiedMethodOfCmlr(
-            int totalNumberOfExperimentsGroup, int initialNumberOfExperimentsGroup, double[][] independentVariables,
+            int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, double[][] independentVariables,
             double[] correctCoefficients, double[][] errors) {
         RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
         RealMatrix errorsMatrix = new Array2DRowRealMatrix(errors);
         RealVector dependentVariables =
                 calculateDependentVariables(independentVariablesMatrix, correctCoefficients);
         RealMatrix adjustedInitialDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, initialNumberOfExperimentsGroup);
-        RealMatrix adjustedValidationDependentVariables =
-                adjustDependentVariables(dependentVariables,
-                        errorsMatrix, initialNumberOfExperimentsGroup, totalNumberOfExperimentsGroup);
-        RealMatrix adjustedDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, totalNumberOfExperimentsGroup);
+                adjustDependentVariables(dependentVariables, errorsMatrix, 0, repetitionsNumberOfActiveExperiments);
+        RealMatrix adjustedValidationDependentVariables = adjustDependentVariables(
+                dependentVariables, errorsMatrix, repetitionsNumberOfActiveExperiments,
+                repetitionsNumberOfActiveExperiments + numberOfValidationSequences);
+        RealMatrix adjustedDependentVariables = adjustDependentVariables(
+                dependentVariables, errorsMatrix, 0,
+                repetitionsNumberOfActiveExperiments + numberOfValidationSequences);
         RealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariablesMatrix);
         RealVector meanOfInitialDependentVariables = meanOfMatrixColumns(adjustedInitialDependentVariables);
         RealVector meanOfAllDependentVariables = meanOfMatrixColumns(adjustedDependentVariables);
@@ -97,7 +98,7 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
                 designMatrixWithAllIndependentVariables.getColumnDimension()
         );
         return new RegressionCalculationDto(resultCoefficients.toArray(),
-                compareVectorsByPavlov(new ArrayRealVector(correctCoefficients), resultCoefficients),
+                compareVectorsByPavlov(resultCoefficients, new ArrayRealVector(correctCoefficients)),
                 getNumberOfZerosInArray(correctCoefficients), getNumberOfZerosInArray(resultCoefficients.toArray()));
     }
 

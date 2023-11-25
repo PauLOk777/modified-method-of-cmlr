@@ -38,7 +38,7 @@ public class MultivariateLinearRegressionController {
         }
 
         return multivariateLinearRegressionService.solveRegressionWithModifiedMethodOfCmlr(
-                body.totalNumberOfExperimentsGroup(), body.initialNumberOfExperimentsGroup(), body.independentVariables(),
+                body.repetitionsNumberOfActiveExperiments(), body.numberOfValidationSequences(), body.independentVariables(),
                 body.correctCoefficients(), body.errors());
     }
 }

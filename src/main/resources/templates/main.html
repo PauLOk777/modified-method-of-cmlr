@@ -14,24 +14,25 @@
 
         <div class="width-limited">
             <div class="input-group">
-                <label for="numIndependentVariables">Number of Independent Variables</label>
+                <label for="numIndependentVariables">Number Of Independent Variables</label>
                 <input type="number" id="numIndependentVariables" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
             <div class="input-group">
-                <label for="numExperimentGroups">Number of Experiment Groups</label>
-                <input type="number" id="numExperimentGroups" placeholder="Enter a number from 2 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
-            </div>
-
-            <div class="input-group">
-                <label for="experimentsPerGroup">Experiments in a Single Group</label>
+                <label for="experimentsPerGroup">Number of Experiments</label>
                 <input type="number" id="experimentsPerGroup" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
 
             <div class="input-group">
-                <label for="initialStepsExperimentGroups">Experiment Groups for Initial Steps</label>
-                <input type="number" id="initialStepsExperimentGroups" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
+                <label for="repetitionsNumberOfActiveExperiments">Repetitions Number of Active Experiments</label>
+                <input type="number" id="repetitionsNumberOfActiveExperiments" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
+
+            <div class="input-group">
+                <label for="numberOfValidationSequences">Number of validation sequences</label>
+                <input type="number" id="numberOfValidationSequences" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
+            </div>
+
         </div>
 
         <div id="coefficientsGroup" class="hidden input-group">
@@ -46,19 +47,6 @@
                 </label>
                 <button id="generateRandomNumbersButton">
                     Generate random numbers in range
-                </button>
-            </div>
-        </div>
-
-        <div id="errorsGroup" class="hidden input-group">
-            <h2>Errors</h2>
-            <table id="errorsTable">
-            </table>
-            <div class="errors-generate-numbers-inputs width-limited">
-                <input type="number" id="meanInput" placeholder="Mean">
-                <input type="number" id="stdDevInput" placeholder="Standard Deviation">
-                <button id="generateNormallyDistributedRandomNumbersButton">
-                    Generate normally distributed random numbers
                 </button>
             </div>
         </div>
@@ -79,14 +67,28 @@
             </div>
         </div>
 
+        <div id="errorsGroup" class="hidden input-group">
+            <h2>Errors</h2>
+            <table id="errorsTable">
+            </table>
+            <div class="errors-generate-numbers-inputs width-limited">
+                <input type="number" id="meanInput" placeholder="Mean">
+                <input type="number" id="stdDevInput" placeholder="Standard Deviation">
+                <button id="generateNormallyDistributedRandomNumbersButton">
+                    Generate normally distributed random numbers
+                </button>
+            </div>
+        </div>
+
         <div id="resultsGroup" class="hidden">
+            <hr/>
             <h1>RESULTS</h1>
             <h3>Coefficients</h3>
             <table id="resultsTable">
             </table>
-            <h3>Comparison Value By Pavlov Method: <span id="comparisonValueByPavlov"></span></h3>
-            <h3>Number Of Initial Zero Coefficients: <span id="numberOfInitialZeroCoefficients"></span></h3>
-            <h3>Number Of Calculated Zero Coefficients: <span id="numberOfCalculatedZeroCoefficients"></span></h3>
+            <h3>Comparison Value by Pavlov Method: <span id="comparisonValueByPavlov"></span></h3>
+            <h3>Number of Initial Zero Coefficients: <span id="numberOfInitialZeroCoefficients"></span></h3>
+            <h3>Number of Calculated Zero Coefficients: <span id="numberOfCalculatedZeroCoefficients"></span></h3>
         </div>
 
         <div class="width-limited">
