@@ -39,7 +39,10 @@
             <h2>Coefficients</h2>
             <table id="coefficientsTable">
             </table>
-            <div class="range-inputs width-limited">
+            <div class="table-operations width-limited">
+                <button id="copyCoefficients" data-table-id="coefficientsTable">
+                    Copy to clipboard
+                </button>
                 <input type="number" id="startRangeInput" placeholder="Start Range (inclusively)">
                 <input type="number" id="endRangeInput" placeholder="End Range (exclusively)">
                 <label for="integerCheckbox">
@@ -55,7 +58,10 @@
             <h2>Independent Variables</h2>
             <table id="independentVariablesTable">
             </table>
-            <div class="range-inputs width-limited">
+            <div class="table-operations width-limited">
+                <button id="copyIndependentVariables" data-table-id="independentVariablesTable">
+                    Copy to clipboard
+                </button>
                 <input type="number" id="startRangeInputIV" placeholder="Start Range (inclusively)">
                 <input type="number" id="endRangeInputIV" placeholder="End Range (exclusively)">
                 <label for="integerCheckboxIV">
@@ -71,7 +77,10 @@
             <h2>Errors</h2>
             <table id="errorsTable">
             </table>
-            <div class="errors-generate-numbers-inputs width-limited">
+            <div class="table-operations width-limited">
+                <button id="copyErrors" data-table-id="errorsTable">
+                    Copy to clipboard
+                </button>
                 <input type="number" id="meanInput" placeholder="Mean">
                 <input type="number" id="stdDevInput" placeholder="Standard Deviation">
                 <button id="generateNormallyDistributedRandomNumbersButton">
@@ -86,6 +95,11 @@
             <h3>Coefficients</h3>
             <table id="resultsTable">
             </table>
+            <div class="table-operations">
+                <button id="copyResults" data-table-id="resultsTable">
+                    Copy to clipboard
+                </button>
+            </div>
             <h3>Comparison Value by Pavlov Method: <span id="comparisonValueByPavlov"></span></h3>
             <h3>Number of Initial Zero Coefficients: <span id="numberOfInitialZeroCoefficients"></span></h3>
             <h3>Number of Calculated Zero Coefficients: <span id="numberOfCalculatedZeroCoefficients"></span></h3>

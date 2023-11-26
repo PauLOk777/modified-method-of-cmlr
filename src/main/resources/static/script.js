@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const comparisonValueByPavlovSpan = document.getElementById("comparisonValueByPavlov");
     const numberOfInitialZeroCoefficientsSpan = document.getElementById("numberOfInitialZeroCoefficients");
     const numberOfCalculatedZeroCoefficientsSpan = document.getElementById("numberOfCalculatedZeroCoefficients");
+    const copyCoefficientsButton = document.getElementById("copyCoefficients");
+    const copyIndependentVariablesButton = document.getElementById("copyIndependentVariables");
+    const copyErrorsButton = document.getElementById("copyErrors");
+    const copyResultsButton = document.getElementById("copyResults");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
@@ -28,6 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
     generateRandomNumbersButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
     generateRandomNumbersButtonIV.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
     generateResultsButton.addEventListener("click", generateResults);
+    copyCoefficientsButton.addEventListener("click", copyTableToClipboardInJson);
+    copyIndependentVariablesButton.addEventListener("click", copyTableToClipboardInJson);
+    copyErrorsButton.addEventListener("click", copyTableToClipboardInJson);
+    copyResultsButton.addEventListener("click", copyTableToClipboardInJson);
     fullScreenToggle.addEventListener("change", toggleFullScreen);
 
     function showInputArrays() {
@@ -336,6 +344,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         return true;
+    }
+
+    function copyTableToClipboardInJson() {
+        const table = document.getElementById(this.dataset.tableId);
+        const rows = table.getElementsByTagName('tr');
+        const result = [];
+
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName('td');
+          const rowData = Array.from(cells).map(cell => cell.querySelector('input').value);
+          result.push(`[${rowData.join(', ')}]`);
+        }
+
+        navigator.clipboard.writeText(`[${result.join(', ')}]`)
+            .then(() => alert('Copied to clipboard!'));
     }
 
     function toggleFullScreen() {

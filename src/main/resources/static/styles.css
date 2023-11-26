@@ -79,7 +79,7 @@ th, td {
     text-align: center;
 }
 
-.errors-generate-numbers-inputs {
+.table-operations {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -87,7 +87,7 @@ th, td {
     margin-top: 20px;
 }
 
-.errors-generate-numbers-inputs input[type="number"] {
+.table-operations input[type="number"] {
     padding: 6px 10px;
     margin-bottom: 5px;
     border: 1px solid #ccc;
@@ -96,8 +96,8 @@ th, td {
     width: auto;
 }
 
-.errors-generate-numbers-inputs button {
-    margin-top: 10px;
+.table-operations button {
+    margin: 10px 0px;
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -107,39 +107,7 @@ th, td {
     width: auto;
 }
 
-.errors-generate-numbers-inputs button:hover {
-    background-color: #0056b3;
-}
-
-.range-inputs {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.range-inputs input[type="number"] {
-    padding: 6px 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    width: auto;
-}
-
-.range-inputs button {
-    margin-top: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    width: auto;
-}
-
-.range-inputs button:hover {
+.table-operations button:hover {
     background-color: #0056b3;
 }
 
