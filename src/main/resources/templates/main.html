@@ -43,13 +43,21 @@
                 <button id="copyCoefficients" data-table-id="coefficientsTable">
                     Copy to clipboard
                 </button>
+                <label for="startRangeInput">Generate random numbers in range</label>
                 <input type="number" id="startRangeInput" placeholder="Start Range (inclusively)">
                 <input type="number" id="endRangeInput" placeholder="End Range (exclusively)">
                 <label for="integerCheckbox">
                     <input type="checkbox" id="integerCheckbox" /> Integer Numbers
                 </label>
                 <button id="generateRandomNumbersButton">
-                    Generate random numbers in range
+                    Generate
+                </button>
+                <h2>OR</h2>
+                <label for="jsonMatrixForCoefficients">Import via JSON matrix</label>
+                <textarea id="jsonMatrixForCoefficients"></textarea>
+                <button id="importJsonMatrixForCoefficients" data-table-id="coefficientsTable"
+                        data-textarea-id="jsonMatrixForCoefficients" data-rows="" data-columns="">
+                    Import
                 </button>
             </div>
         </div>
@@ -62,13 +70,21 @@
                 <button id="copyIndependentVariables" data-table-id="independentVariablesTable">
                     Copy to clipboard
                 </button>
+                <label for="startRangeInputIV">Generate random numbers in range</label>
                 <input type="number" id="startRangeInputIV" placeholder="Start Range (inclusively)">
                 <input type="number" id="endRangeInputIV" placeholder="End Range (exclusively)">
                 <label for="integerCheckboxIV">
                     <input type="checkbox" id="integerCheckboxIV" /> Integer Numbers
                 </label>
                 <button id="generateRandomNumbersButtonIV">
-                    Generate random numbers in range
+                    Generate
+                </button>
+                <h2>OR</h2>
+                <label for="jsonMatrixForIndependentVariables">Import via JSON matrix</label>
+                <textarea id="jsonMatrixForIndependentVariables"></textarea>
+                <button id="importJsonMatrixForIndependentVariables" data-table-id="independentVariablesTable"
+                        data-textarea-id="jsonMatrixForIndependentVariables" data-rows="" data-columns="">
+                    Import
                 </button>
             </div>
         </div>
@@ -81,10 +97,18 @@
                 <button id="copyErrors" data-table-id="errorsTable">
                     Copy to clipboard
                 </button>
+                <label for="meanInput">Generate normally distributed random numbers</label>
                 <input type="number" id="meanInput" placeholder="Mean">
                 <input type="number" id="stdDevInput" placeholder="Standard Deviation">
                 <button id="generateNormallyDistributedRandomNumbersButton">
-                    Generate normally distributed random numbers
+                    Generate
+                </button>
+                <h2>OR</h2>
+                <label for="jsonMatrixForErrors">Import via JSON matrix</label>
+                <textarea id="jsonMatrixForErrors"></textarea>
+                <button id="importJsonMatrixForErrors" data-table-id="errorsTable"
+                        data-textarea-id="jsonMatrixForErrors" data-rows="" data-columns="">
+                    Import
                 </button>
             </div>
         </div>

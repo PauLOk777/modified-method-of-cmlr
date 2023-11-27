@@ -23,6 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const copyIndependentVariablesButton = document.getElementById("copyIndependentVariables");
     const copyErrorsButton = document.getElementById("copyErrors");
     const copyResultsButton = document.getElementById("copyResults");
+    const importJsonMatrixForCoefficientsButton = document.getElementById("importJsonMatrixForCoefficients");
+    const importJsonMatrixForIndependentVariablesButton = document.getElementById("importJsonMatrixForIndependentVariables");
+    const importJsonMatrixForErrorsButton = document.getElementById("importJsonMatrixForErrors");
 
     numIndependentVariablesInput.addEventListener("input", showInputArrays);
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
@@ -36,6 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
     copyIndependentVariablesButton.addEventListener("click", copyTableToClipboardInJson);
     copyErrorsButton.addEventListener("click", copyTableToClipboardInJson);
     copyResultsButton.addEventListener("click", copyTableToClipboardInJson);
+    importJsonMatrixForCoefficientsButton.addEventListener("click", importJsonMatrix);
+    importJsonMatrixForIndependentVariablesButton.addEventListener("click", importJsonMatrix);
+    importJsonMatrixForErrorsButton.addEventListener("click", importJsonMatrix);
     fullScreenToggle.addEventListener("change", toggleFullScreen);
 
     function showInputArrays() {
@@ -59,11 +65,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const coefficientsTable = document.getElementById("coefficientsTable");
 
         if (!isNaN(numIndependentVariables) && numIndependentVariables > 0) {
-            coefficientsGroup.classList.remove("hidden");
             coefficientsTable.innerHTML = generateMatrixTable(1, numIndependentVariables + 1, 0, 'θ');
+            importJsonMatrixForCoefficientsButton.dataset.rows = 1;
+            importJsonMatrixForCoefficientsButton.dataset.columns = numIndependentVariables + 1;
+            coefficientsGroup.classList.remove("hidden");
         } else {
-            coefficientsGroup.classList.add("hidden");
             coefficientsTable.innerHTML = "";
+            importJsonMatrixForCoefficientsButton.dataset.rows = "";
+            importJsonMatrixForCoefficientsButton.dataset.columns = "";
+            coefficientsGroup.classList.add("hidden");
         }
     }
 
@@ -77,12 +87,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!isNaN(repetitionsNumberOfActiveExperiments) && !isNaN(numberOfValidationSequences) &&
              !isNaN(experimentsPerGroup) && repetitionsNumberOfActiveExperiments > 0 &&
              numberOfValidationSequences > 0 && experimentsPerGroup > 0) {
-            errorsGroup.classList.remove("hidden");
             errorsTable.innerHTML = generateMatrixTable(experimentsPerGroup,
                     repetitionsNumberOfActiveExperiments + numberOfValidationSequences, 1, 'E');
+            importJsonMatrixForErrorsButton.dataset.rows = experimentsPerGroup;
+            importJsonMatrixForErrorsButton.dataset.columns =
+                        repetitionsNumberOfActiveExperiments + numberOfValidationSequences;
+            errorsGroup.classList.remove("hidden");
         } else {
-            errorsGroup.classList.add("hidden");
             errorsTable.innerHTML = "";
+            importJsonMatrixForErrorsButton.dataset.rows = "";
+            importJsonMatrixForErrorsButton.dataset.columns = "";
+            errorsGroup.classList.add("hidden");
         }
     }
 
@@ -93,11 +108,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const independentVariablesTable = document.getElementById("independentVariablesTable");
 
         if (!isNaN(experimentsPerGroup) && !isNaN(numIndependentVariables) && experimentsPerGroup > 0 && numIndependentVariables > 0) {
-            independentVariablesGroup.classList.remove("hidden");
             independentVariablesTable.innerHTML = generateMatrixTable(experimentsPerGroup, numIndependentVariables, 1, 'X');
+            importJsonMatrixForIndependentVariablesButton.dataset.rows = experimentsPerGroup;
+            importJsonMatrixForIndependentVariablesButton.dataset.columns = numIndependentVariables;
+            independentVariablesGroup.classList.remove("hidden");
         } else {
-            independentVariablesGroup.classList.add("hidden");
             independentVariablesTable.innerHTML = "";
+            importJsonMatrixForIndependentVariablesButton.dataset.rows = "";
+            importJsonMatrixForIndependentVariablesButton.dataset.columns = "";
+            independentVariablesGroup.classList.add("hidden");
         }
     }
 
@@ -167,6 +186,46 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error generating random numbers:", error);
             alert("An error occurred while generating random numbers.");
         });
+    }
+
+    function importJsonMatrix() {
+        const text = document.getElementById(this.dataset.textareaId).value;
+        try {
+            const matrix = JSON.parse(text);
+
+            if (!Array.isArray(matrix)) {
+                alert('Invalid matrix format: Must be an array of arrays.');
+                return;
+            }
+
+            const isValidMatrix = matrix.every(row => Array.isArray(row));
+            if (!isValidMatrix) {
+                alert('Invalid matrix format: Each row must be an array.');
+                return;
+            }
+
+            const isNumericMatrix = matrix.every(row => row.every(value => !isNaN(value)));
+            if (!isNumericMatrix) {
+                alert('Invalid matrix content: All values must be numbers.');
+                return;
+            }
+
+            if (matrix.length != this.dataset.rows) {
+                alert(`Invalid matrix format: matrix should have ${this.dataset.rows} rows.`);
+                return;
+            }
+
+            const isValidColumns = matrix.every(row => row.length == this.dataset.columns);
+            if (!isValidColumns) {
+                alert(`Invalid matrix format: matrix should have ${this.dataset.columns} columns.`);
+                return;
+            }
+
+            displayMatrixInTable(matrix, this.dataset.tableId);
+            alert("Matrix has been successfully imported")
+        } catch (error) {
+            alert('Please provide a valid JSON.');
+        }
     }
 
     function displayMatrixInTable(matrix, tableId) {

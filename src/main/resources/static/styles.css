@@ -107,6 +107,10 @@ th, td {
     width: auto;
 }
 
+.table-operations label {
+    margin: 10px 0px;
+}
+
 .table-operations button:hover {
     background-color: #0056b3;
 }
