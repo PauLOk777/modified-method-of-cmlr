@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             displayMatrixInTable(matrix, this.dataset.tableId);
-            alert("Matrix has been successfully imported")
+            alert("Matrix has been successfully imported");
         } catch (error) {
             alert('Please provide a valid JSON.');
         }
