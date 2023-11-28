@@ -126,11 +126,12 @@ th, td {
 }
 
 .full-screen-toggle-switch {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
   display: flex;
   align-items: center;
+  z-index: 999;
 }
 
 .full-screen-toggle-switch label {
