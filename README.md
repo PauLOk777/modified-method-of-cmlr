@@ -1,3 +1,4 @@
 # Starting the application
 
-Run the next command to start Spring application: **./mvnw spring-boot:run**
+### Linux: **./mvnw spring-boot:run**
+### Windows: **mvnw spring-boot:run**
