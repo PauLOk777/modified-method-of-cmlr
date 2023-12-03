@@ -3,17 +3,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const experimentsPerGroupInput = document.getElementById("experimentsPerGroup");
     const repetitionsNumberOfActiveExperimentsInput = document.getElementById("repetitionsNumberOfActiveExperiments");
     const numberOfValidationSequencesInput = document.getElementById("numberOfValidationSequences");
-    const meanInput = document.getElementById("meanInput");
-    const stdDevInput = document.getElementById("stdDevInput");
+    const meanInputErrors = document.getElementById("meanInputErrors");
+    const stdDevInputErrors = document.getElementById("stdDevInputErrors");
     const generateNormallyDistributedRandomNumbersButton = document.getElementById("generateNormallyDistributedRandomNumbersButton");
-    const startRangeInput = document.getElementById("startRangeInput");
-    const endRangeInput = document.getElementById("endRangeInput");
-    const generateRandomNumbersButton = document.getElementById("generateRandomNumbersButton");
+    const startRangeInputCoefficients = document.getElementById("startRangeInputCoefficients");
+    const endRangeInputCoefficients = document.getElementById("endRangeInputCoefficients");
+    const generateRandomNumbersCoefficientsButton = document.getElementById("generateRandomNumbersCoefficients");
     const startRangeInputIV = document.getElementById("startRangeInputIV");
     const endRangeInputIV = document.getElementById("endRangeInputIV");
-    const generateRandomNumbersButtonIV = document.getElementById("generateRandomNumbersButtonIV");
-    const integerCheckbox = document.getElementById("integerCheckbox");
+    const generateRandomNumbersIVButton = document.getElementById("generateRandomNumbersIV");
+    const startRangeInputErrors = document.getElementById("startRangeInputErrors");
+    const endRangeInputErrors = document.getElementById("endRangeInputErrors");
+    const generateRandomNumbersErrorsButton = document.getElementById("generateRandomNumbersErrors");
+    const integerCheckboxCoefficients = document.getElementById("integerCheckboxCoefficients");
     const integerCheckboxIV = document.getElementById("integerCheckboxIV");
+    const integerCheckboxErrors = document.getElementById("integerCheckboxErrors");
     const generateResultsButton = document.getElementById("generateResultsButton");
     const fullScreenToggle = document.getElementById("fullScreenToggle");
     const comparisonValueByPavlovSpan = document.getElementById("comparisonValueByPavlov");
@@ -32,9 +36,10 @@ document.addEventListener("DOMContentLoaded", function () {
     experimentsPerGroupInput.addEventListener("input", showInputArrays);
     repetitionsNumberOfActiveExperimentsInput.addEventListener("input", showInputArrays);
     numberOfValidationSequencesInput.addEventListener("input", showInputArrays);
-    generateNormallyDistributedRandomNumbersButton.addEventListener("click", generateNormallyDistributedRandomNumbers);
-    generateRandomNumbersButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
-    generateRandomNumbersButtonIV.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
+    generateNormallyDistributedRandomNumbersButton.addEventListener("click", generateNormallyDistributedRandomNumbersForErrors);
+    generateRandomNumbersCoefficientsButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
+    generateRandomNumbersIVButton.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
+    generateRandomNumbersErrorsButton.addEventListener("click", generateRandomNumbersInErrorsRange);
     generateResultsButton.addEventListener("click", generateResults);
     copyCoefficientsButton.addEventListener("click", copyTableToClipboardInJson);
     copyIndependentVariablesButton.addEventListener("click", copyTableToClipboardInJson);
@@ -147,9 +152,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return matrixTableHTML;
     }
 
-    function generateNormallyDistributedRandomNumbers() {
-        const mean = parseFloat(meanInput.value);
-        const stdDev = parseFloat(stdDevInput.value);
+    function generateNormallyDistributedRandomNumbersForErrors() {
+        const mean = parseFloat(meanInputErrors.value);
+        const stdDev = parseFloat(stdDevInputErrors.value);
 
         if (isNaN(mean) || isNaN(stdDev)) {
             alert("Please enter valid mean and standard deviation values.");
@@ -245,8 +250,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function generateRandomNumbersInCoefficientsRange() {
-        const start = parseFloat(startRangeInput.value);
-        const end = parseFloat(endRangeInput.value);
+        const start = parseFloat(startRangeInputCoefficients.value);
+        const end = parseFloat(endRangeInputCoefficients.value);
 
         if (isNaN(start) || isNaN(end)) {
             alert("Please enter valid start and end range values.");
@@ -255,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const rows = 1;
         const columns = parseInt(numIndependentVariablesInput.value) + 1;
-        const dataType = integerCheckbox.checked ? 'int' : 'double'
+        const dataType = integerCheckboxCoefficients.checked ? 'int' : 'double'
 
         generateRandomNumbers(start, end, rows, columns, dataType, "coefficientsTable");
     }
@@ -274,6 +279,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const dataType = integerCheckboxIV.checked ? 'int' : 'double'
 
         generateRandomNumbers(start, end, rows, columns, dataType, "independentVariablesTable");
+    }
+
+    function generateRandomNumbersInErrorsRange() {
+        const start = parseFloat(startRangeInputErrors.value);
+        const end = parseFloat(endRangeInputErrors.value);
+
+        if (isNaN(start) || isNaN(end)) {
+            alert("Please enter valid start and end range values.");
+            return;
+        }
+
+        const rows = parseInt(experimentsPerGroupInput.value);
+        const columns = parseInt(repetitionsNumberOfActiveExperimentsInput.value) +
+                parseInt(numberOfValidationSequencesInput.value);
+        const dataType = integerCheckboxErrors.checked ? 'int' : 'double'
+
+        generateRandomNumbers(start, end, rows, columns, dataType, "errorsTable");
     }
 
     function generateRandomNumbers(start, end, rows, columns, dataType, tableId) {

@@ -43,13 +43,13 @@
                 <button id="copyCoefficients" data-table-id="coefficientsTable">
                     Copy to clipboard
                 </button>
-                <label for="startRangeInput">Generate random numbers in range</label>
-                <input type="number" id="startRangeInput" placeholder="Start Range (inclusively)">
-                <input type="number" id="endRangeInput" placeholder="End Range (exclusively)">
-                <label for="integerCheckbox">
-                    <input type="checkbox" id="integerCheckbox" /> Integer Numbers
+                <label for="startRangeInputCoefficients">Generate random numbers in range</label>
+                <input type="number" id="startRangeInputCoefficients" placeholder="Start Range (inclusively)">
+                <input type="number" id="endRangeInputCoefficients" placeholder="End Range (exclusively)">
+                <label for="integerCheckboxCoefficients">
+                    <input type="checkbox" id="integerCheckboxCoefficients" /> Integer Numbers
                 </label>
-                <button id="generateRandomNumbersButton">
+                <button id="generateRandomNumbersCoefficients">
                     Generate
                 </button>
                 <h2>OR</h2>
@@ -76,7 +76,7 @@
                 <label for="integerCheckboxIV">
                     <input type="checkbox" id="integerCheckboxIV" /> Integer Numbers
                 </label>
-                <button id="generateRandomNumbersButtonIV">
+                <button id="generateRandomNumbersIV">
                     Generate
                 </button>
                 <h2>OR</h2>
@@ -97,10 +97,20 @@
                 <button id="copyErrors" data-table-id="errorsTable">
                     Copy to clipboard
                 </button>
-                <label for="meanInput">Generate normally distributed random numbers</label>
-                <input type="number" id="meanInput" placeholder="Mean">
-                <input type="number" id="stdDevInput" placeholder="Standard Deviation">
+                <label for="meanInputErrors">Generate normally distributed random numbers</label>
+                <input type="number" id="meanInputErrors" placeholder="Mean">
+                <input type="number" id="stdDevInputErrors" placeholder="Standard Deviation">
                 <button id="generateNormallyDistributedRandomNumbersButton">
+                    Generate
+                </button>
+                <h2>OR</h2>
+                <label for="startRangeInputErrors">Generate random numbers in range</label>
+                <input type="number" id="startRangeInputErrors" placeholder="Start Range (inclusively)">
+                <input type="number" id="endRangeInputErrors" placeholder="End Range (exclusively)">
+                <label for="integerCheckboxErrors">
+                    <input type="checkbox" id="integerCheckboxErrors" /> Integer Numbers
+                </label>
+                <button id="generateRandomNumbersErrors">
                     Generate
                 </button>
                 <h2>OR</h2>
@@ -124,7 +134,7 @@
                     Copy to clipboard
                 </button>
             </div>
-            <h3>Comparison Value by Pavlov Method: <span id="comparisonValueByPavlov"></span></h3>
+            <h3>Comparison Value by Pavlov/Holovchenko Method: <span id="comparisonValueByPavlov"></span></h3>
             <h3>Number of Initial Zero Coefficients: <span id="numberOfInitialZeroCoefficients"></span></h3>
             <h3>Number of Calculated Zero Coefficients: <span id="numberOfCalculatedZeroCoefficients"></span></h3>
             <h3>Number of Matching With Correct Coefficients Zeros: <span id="numberOfMatchingWithCorrectCoefficientsZeros"></span></h3>
