@@ -4,12 +4,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class MainPageController {
+public class SingleRunPageController {
 
-    private static final String MAIN_PAGE = "main";
+    private static final String SINGLE_RUN_PAGE = "singleRun";
 
     @GetMapping("/")
     public String getMainPage() {
-        return MAIN_PAGE;
+        return SINGLE_RUN_PAGE;
     }
 }

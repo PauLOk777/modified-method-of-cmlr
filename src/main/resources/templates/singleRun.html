@@ -13,6 +13,10 @@
         </div>
 
         <div class="width-limited">
+            <div class="link-wrapper">
+                <a class="link" href="/multiple-runs">Multiple Runs</a>
+            </div>
+
             <div class="input-group">
                 <label for="numIndependentVariables">Number of Independent Variables</label>
                 <input type="number" id="numIndependentVariables" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
@@ -29,10 +33,9 @@
             </div>
 
             <div class="input-group">
-                <label for="numberOfValidationSequences">Number of validation sequences</label>
+                <label for="numberOfValidationSequences">Number of Validation Sequences</label>
                 <input type="number" id="numberOfValidationSequences" placeholder="Enter a number from 1 up to 100" min="1" max="100" onkeydown="validateNumberInput(this, event)">
             </div>
-
         </div>
 
         <div id="coefficientsGroup" class="hidden input-group">
@@ -146,6 +149,6 @@
             </button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="singleRunScript.js"></script>
 </body>
 </html>
