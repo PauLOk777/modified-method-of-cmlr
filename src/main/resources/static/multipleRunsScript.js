@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const percentageOfCorrectModelsSpan = document.getElementById("percentageOfCorrectModels");
     const percentageOfIncorrectModelsWithOneIncorrectZeroSpan = document.getElementById("percentageOfIncorrectModelsWithOneIncorrectZero");
     const percentageOfIncorrectModelsWithTwoPlusIncorrectZerosSpan = document.getElementById("percentageOfIncorrectModelsWithTwoPlusIncorrectZeros");
+    const copyCoefficientsButton = document.getElementById("copyCoefficients");
     const copyIndependentVariablesButton = document.getElementById("copyIndependentVariables");
     const importJsonMatrixForCoefficientsButton = document.getElementById("importJsonMatrixForCoefficients");
     const importJsonMatrixForIndependentVariablesButton = document.getElementById("importJsonMatrixForIndependentVariables");
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     generateRandomNumbersCoefficientsButton.addEventListener("click", generateRandomNumbersInCoefficientsRange);
     generateRandomNumbersIVButton.addEventListener("click", generateRandomNumbersInIndependentVariablesRange);
     generateResultsButton.addEventListener("click", generateResults);
+    copyCoefficientsButton.addEventListener("click", copyTableToClipboardInJson);
     copyIndependentVariablesButton.addEventListener("click", copyTableToClipboardInJson);
     importJsonMatrixForCoefficientsButton.addEventListener("click", importJsonMatrix);
     importJsonMatrixForIndependentVariablesButton.addEventListener("click", importJsonMatrix);
