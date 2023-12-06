@@ -298,8 +298,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 stdDev
             };
         } else {
-            const start = parseFloat(meanInputErrors.value);
-            const end =  parseFloat(stdDevInputErrors.value);
+            const start = parseFloat(startRangeInputErrors.value);
+            const end = parseFloat(endRangeInputErrors.value);
             requestData = {
                 repetitionsNumberOfActiveExperiments,
                 numberOfValidationSequences,
