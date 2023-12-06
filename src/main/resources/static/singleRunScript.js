@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const comparisonValueByPavlovSpan = document.getElementById("comparisonValueByPavlov");
     const numberOfInitialZeroCoefficientsSpan = document.getElementById("numberOfInitialZeroCoefficients");
     const numberOfCalculatedZeroCoefficientsSpan = document.getElementById("numberOfCalculatedZeroCoefficients");
-    const numberOfMatchingWithCorrectCoefficientsZerosSpan = document.getElementById("numberOfMatchingWithCorrectCoefficientsZeros");
+    const numberOfMismatchedZerosSpan = document.getElementById("numberOfMismatchedZeros");
     const copyCoefficientsButton = document.getElementById("copyCoefficients");
     const copyIndependentVariablesButton = document.getElementById("copyIndependentVariables");
     const copyErrorsButton = document.getElementById("copyErrors");
@@ -374,7 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 comparisonValueByPavlovSpan.innerHTML = data.comparisonValueByPavlov;
                 numberOfInitialZeroCoefficientsSpan.innerHTML = data.numberOfInitialZeroCoefficients;
                 numberOfCalculatedZeroCoefficientsSpan.innerHTML = data.numberOfCalculatedZeroCoefficients;
-                numberOfMatchingWithCorrectCoefficientsZerosSpan.innerHTML = data.numberOfMatchingWithCorrectCoefficientsZeros;
+                numberOfMismatchedZerosSpan.innerHTML = data.numberOfMismatchedZeros;
                 document.getElementById("resultsGroup").classList.remove("hidden");
                 window.scrollTo(0, document.body.scrollHeight);
             } else {

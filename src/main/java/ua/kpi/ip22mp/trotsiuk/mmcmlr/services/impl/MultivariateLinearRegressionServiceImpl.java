@@ -21,7 +21,7 @@ import static org.apache.commons.math3.linear.MatrixUtils.inverse;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M1_MODIFIED_METHOD;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M2_MODIFIED_METHOD;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.compareVectorsByPavlov;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfMatchingWithFirstArrayZeros;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfMissingZeros;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfZerosInArray;
 
 @Service
@@ -101,7 +101,7 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         return new RegressionCalculationDto(resultCoefficients.toArray(),
                 compareVectorsByPavlov(resultCoefficients, new ArrayRealVector(correctCoefficients)),
                 getNumberOfZerosInArray(correctCoefficients), getNumberOfZerosInArray(resultCoefficients.toArray()),
-                getNumberOfMatchingWithFirstArrayZeros(correctCoefficients, resultCoefficients.toArray()));
+                getNumberOfMissingZeros(correctCoefficients, resultCoefficients.toArray()));
     }
 
     private RealVector calculateDependentVariables(

@@ -18,17 +18,6 @@ public class VectorUtils {
         return (int) stream(array).filter(number -> number == DOUBLE_ZERO).count();
     }
 
-    public static int getNumberOfMatchingWithFirstArrayZeros(double[] array1, double[] array2) {
-        int count = 0;
-        for (int i = 0; i < array1.length; i++) {
-            if (array1[i] == DOUBLE_ZERO && array2[i] == DOUBLE_ZERO) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
     public static int getNumberOfMissingZeros(double[] array1, double[] array2) {
         int count = 0;
         for (int i = 0; i < array1.length; i++) {
