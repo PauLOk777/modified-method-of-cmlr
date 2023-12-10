@@ -15,7 +15,7 @@ public record NormallyDistributedRandomNumbersMMCMLRRequestBody (
     @Max(value = 10, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.numberOfValidationSequences.Max}")
     int numberOfValidationSequences,
     @Min(value = 1, message = "{number.of.runs.Min}")
-    @Min(value = 10000, message = "{number.of.runs.Max}")
+    @Max(value = 10000, message = "{number.of.runs.Max}")
     int numberOfRuns,
     @Size(min = 1, max = 31, message = "{ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody.correctCoefficients.Size}")
     double[] correctCoefficients,
