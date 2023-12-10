@@ -7,10 +7,14 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultipleRunsMultivariateLinearRegr
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.RandomNumbersService;
 
+import static java.math.BigDecimal.valueOf;
+import static java.math.RoundingMode.HALF_EVEN;
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfMissingZeros;
 
 @Service
 public class MultipleRunsMultivariateLinearRegressionImpl implements MultipleRunsMultivariateLinearRegression {
+
+    private static final int PERCENTAGE_SCALE = 2;
 
     private MultivariateLinearRegressionService multivariateLinearRegressionService;
     private RandomNumbersService randomNumbersService;
@@ -48,9 +52,9 @@ public class MultipleRunsMultivariateLinearRegressionImpl implements MultipleRun
             }
         }
 
-        return new MultipleRunsOfRegressionCalculationDto((double) countOfCorrectModels / numberOfRuns * 100,
-                (double) countOfIncorrectModelsWithOneIncorrectZero / numberOfRuns * 100,
-                (double) countOfIncorrectModelsWithTwoPlusIncorrectZeros / numberOfRuns * 100);
+        return new MultipleRunsOfRegressionCalculationDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
+                calculatePercentage(countOfIncorrectModelsWithOneIncorrectZero, numberOfRuns),
+                calculatePercentage(countOfIncorrectModelsWithTwoPlusIncorrectZeros, numberOfRuns));
     }
 
     @Override
@@ -81,8 +85,15 @@ public class MultipleRunsMultivariateLinearRegressionImpl implements MultipleRun
             }
         }
 
-        return new MultipleRunsOfRegressionCalculationDto((double) countOfCorrectModels / numberOfRuns * 100,
-                (double) countOfIncorrectModelsWithOneIncorrectZero / numberOfRuns * 100,
-                (double) countOfIncorrectModelsWithTwoPlusIncorrectZeros / numberOfRuns * 100);
+        return new MultipleRunsOfRegressionCalculationDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
+                calculatePercentage(countOfIncorrectModelsWithOneIncorrectZero, numberOfRuns),
+                calculatePercentage(countOfIncorrectModelsWithTwoPlusIncorrectZeros, numberOfRuns));
+    }
+
+    private static double calculatePercentage(int numerator, int denominator) {
+        return valueOf(numerator)
+                .multiply(valueOf(100))
+                .divide(valueOf(denominator), PERCENTAGE_SCALE, HALF_EVEN)
+                .doubleValue();
     }
 }
