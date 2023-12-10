@@ -33,9 +33,9 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
         m2.put(lastEntry.getKey(), lastEntry.getValue());
 
         while (!coefficientsSortedByModule.isEmpty()) {
-            double averageOfM1 = m1.values().stream().mapToDouble(aDouble -> aDouble).average().orElse(0);
+            double averageAbsoluteValueOfM1 = m1.values().stream().mapToDouble(Math::abs).average().orElse(0);
             Map.Entry<Integer, Double> entry = coefficientsSortedByModule.pollFirstEntry();
-            if (averageOfM1 - entry.getValue() >= entry.getValue() - lastEntry.getValue()) {
+            if (averageAbsoluteValueOfM1 - Math.abs(entry.getValue()) >= Math.abs(entry.getValue()) - Math.abs(lastEntry.getValue())) {
                 m2.put(entry.getKey(), entry.getValue());
                 m2.putAll(coefficientsSortedByModule);
                 break;
