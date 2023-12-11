@@ -15,7 +15,7 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationDto;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.ModifiedMethodOfCmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.NormallyDistributedRandomNumbersMmcmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.RandomNumbersMmcmlrRequestBody;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultipleRunsMultivariateLinearRegression;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultipleRunsMultivariateLinearRegressionService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.validators.NormallyDistributedRandomNumbersMmcmlrRequestBodyValidator;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.validators.RandomNumbersMmcmlrRequestBodyValidator;
@@ -25,7 +25,7 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.validation.validators.RandomNumbersMmcmlrRe
 public class MultivariateLinearRegressionController {
 
     private final MultivariateLinearRegressionService multivariateLinearRegressionService;
-    private final MultipleRunsMultivariateLinearRegression multipleRunsMultivariateLinearRegression;
+    private final MultipleRunsMultivariateLinearRegressionService multipleRunsMultivariateLinearRegressionService;
     private final Validator modifiedMethodOfCmlrRequestBodyValidator;
     private final Validator normallyDistributedRandomNumbersMmcmlrRequestBodyValidator;
     private final Validator randomNumbersMmcmlrRequestBodyValidator;
@@ -33,14 +33,14 @@ public class MultivariateLinearRegressionController {
     @Autowired
     public MultivariateLinearRegressionController(
             MultivariateLinearRegressionService multivariateLinearRegressionService,
-            MultipleRunsMultivariateLinearRegression multipleRunsMultivariateLinearRegression,
+            MultipleRunsMultivariateLinearRegressionService multipleRunsMultivariateLinearRegressionService,
             @Qualifier("modifiedMethodOfCmlrRequestBodyValidator") Validator modifiedMethodOfCmlrRequestBodyValidator,
             @Qualifier("normallyDistributedRandomNumbersMmcmlrRequestBodyValidator")
             NormallyDistributedRandomNumbersMmcmlrRequestBodyValidator normallyDistributedRandomNumbersMmcmlrRequestBodyValidator,
             @Qualifier("randomNumbersMmcmlrRequestBodyValidator")
             RandomNumbersMmcmlrRequestBodyValidator randomNumbersMmcmlrRequestBodyValidator) {
         this.multivariateLinearRegressionService = multivariateLinearRegressionService;
-        this.multipleRunsMultivariateLinearRegression = multipleRunsMultivariateLinearRegression;
+        this.multipleRunsMultivariateLinearRegressionService = multipleRunsMultivariateLinearRegressionService;
         this.modifiedMethodOfCmlrRequestBodyValidator = modifiedMethodOfCmlrRequestBodyValidator;
         this.normallyDistributedRandomNumbersMmcmlrRequestBodyValidator =
                 normallyDistributedRandomNumbersMmcmlrRequestBodyValidator;
@@ -68,7 +68,7 @@ public class MultivariateLinearRegressionController {
             throw new BindException(bindingResult);
         }
 
-        return multipleRunsMultivariateLinearRegression.multipleRunsOfModifiedMethodOfCmlrWithRandomNumbers(
+        return multipleRunsMultivariateLinearRegressionService.multipleRunsOfModifiedMethodOfCmlrWithRandomNumbers(
                 body.repetitionsNumberOfActiveExperiments(), body.numberOfValidationSequences(), body.numberOfRuns(),
                 body.correctCoefficients(), body.independentVariables(), body.range().start(), body.range().end()
         );
@@ -82,7 +82,7 @@ public class MultivariateLinearRegressionController {
             throw new BindException(bindingResult);
         }
 
-        return multipleRunsMultivariateLinearRegression.multipleRunsOfModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
+        return multipleRunsMultivariateLinearRegressionService.multipleRunsOfModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
                 body.repetitionsNumberOfActiveExperiments(), body.numberOfValidationSequences(), body.numberOfRuns(),
                 body.correctCoefficients(), body.independentVariables(), body.mean(), body.stdDev()
         );

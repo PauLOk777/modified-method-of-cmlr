@@ -2,7 +2,7 @@ package ua.kpi.ip22mp.trotsiuk.mmcmlr.services;
 
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.MultipleRunsOfRegressionCalculationDto;
 
-public interface MultipleRunsMultivariateLinearRegression {
+public interface MultipleRunsMultivariateLinearRegressionService {
 
     MultipleRunsOfRegressionCalculationDto multipleRunsOfModifiedMethodOfCmlrWithRandomNumbers(
             int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, int numberOfRuns,
