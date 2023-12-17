@@ -3,6 +3,10 @@ info:
   title: Modified Method Of CMLR
   version: 1.0.0
 
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
 tags:
   - name: MLR
     description: Multivariate Linear Regression operations
@@ -10,62 +14,10 @@ tags:
     description: Generator operations
 
 paths:
-  /multivariate-linear-regression/modified-method-of-cmlr:
+  /multivariate-linear-regression/modified-method-of-cmlr/normally-distributed-random-numbers:
     post:
-      summary: Constructs multivariate linear regression with modified method by Pavlov/Holovchenko
-      operationId: solveRegressionWithModifiedMethodOfCmlr
-      tags:
-        - MLR
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ModifiedMethodOfCmlrRequestBody"
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SingleRunResponse"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequestException"
-
-  /multivariate-linear-regression/modified-method-of-cmlr/multiple-runs/random-numbers:
-    post:
-      summary: Executes modified method of CMLR with given number of runs for errors of random numbers
-      operationId: solveMultipleTimesWithRandomNumbersErrorsRegressionWithModifiedMethodOfCmlr
-      tags:
-        - MLR
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RandomNumbersMmcmlrRequestBody"
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MultipleRunsResponse"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequestException"
-
-  /multivariate-linear-regression/modified-method-of-cmlr/multiple-runs/normally-distributed-random-numbers:
-    post:
-      summary: Executes modified method of CMLR with given number of runs for errors of normally distributed random numbers
-      operationId: solveMultipleTimesWithNormallyDistributedRandomNumbersErrorsRegressionWithModifiedMethodOfCmlr
+      summary: Executes modified method of CMLR with given number of runs with random variables as normally distributed random numbers
+      operationId: solveWithModifiedMethodOfCmlrWithRandomVariablesAsNormallyDistributedRandomNumbers
       tags:
         - MLR
       requestBody:
@@ -80,18 +32,44 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MultipleRunsResponse"
+                $ref: "#/components/schemas/RegressionSimulationStatisticsResponse"
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequestException"
+                $ref: "#/components/schemas/BadRequestResponse"
 
-  /random-numbers/int/matrix:
+  /multivariate-linear-regression/modified-method-of-cmlr/uniformly-distributed-random-numbers:
     post:
-      summary: Generated random integer numbers in matrix
-      operationId: getMatrixOfRandomIntNumbers
+      summary: Executes modified method of CMLR with given number of runs with random variables as uniformly distributed random numbers
+      operationId: solveWithModifiedMethodOfCmlrWithRandomVariablesAsUniformlyDistributedRandomNumbers
+      tags:
+        - MLR
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UniformlyDistributedRandomNumbersMmcmlrRequestBody"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegressionSimulationStatisticsResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestResponse"
+
+  /random-numbers/uniformly-distribution/int/matrix:
+    post:
+      summary: Generate matrix of uniformly distributed int random numbers
+      operationId: generateMatrixOfUniformlyDistributedIntRandomNumbers
       tags:
         - Generator
       requestBody:
@@ -118,12 +96,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequestException"
+                $ref: "#/components/schemas/BadRequestResponse"
 
-  /random-numbers/double/matrix:
+  /random-numbers/uniformly-distribution/double/matrix:
     post:
-      summary: Generated random double numbers in matrix
-      operationId: getMatrixOfRandomDoubleNumbers
+      summary: Generate matrix of uniformly distributed double random numbers
+      operationId: generateMatrixOfUniformlyDistributedDoubleRandomNumbers
       tags:
         - Generator
       requestBody:
@@ -150,128 +128,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BadRequestException"
-
-  /random-numbers/normal-distribution/matrix:
-    post:
-      summary: Generated normally distributed random double numbers in matrix
-      operationId: getMatrixOfNormallyDistributedRandomNumbers
-      tags:
-        - Generator
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MatrixOfNormallyDistributedRandomNumbersRequestBody"
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: array
-                  items:
-                    type: number
-                    format: double
-                example: [
-                  [1.300877568665368, 0.25905329568401003],
-                  [-0.2740089312890524, -0.0412420225935336]
-                ]
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequestException"
+                $ref: "#/components/schemas/BadRequestResponse"
 
 components:
   schemas:
-    ModifiedMethodOfCmlrRequestBody:
+    UniformlyDistributedRandomNumbersMmcmlrRequestBody:
       type: object
-      description: Request body for constructing multivariate linear regression based on correct coefficients
-      required:
-        - repetitionsNumberOfActiveExperiments
-        - numberOfValidationSequences
-        - independentVariables
-        - correctCoefficients
-        - errors
-      properties:
-        repetitionsNumberOfActiveExperiments:
-          type: integer
-          minimum: 1
-          maximum: 10
-          description: Repetitions Number of Active Experiments
-          example: 2
-        numberOfValidationSequences:
-          type: integer
-          minimum: 1
-          maximum: 10
-          description: Number of validation sequences
-          example: 2
-        independentVariables:
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-              format: double
-            minItems: 1
-            maxItems: 30
-          minItems: 1
-          maxItems: 300
-          description: Independent variables matrix
-          example: [
-            [4, 1, 1, 1],
-            [4, 4, 1, 1],
-            [1, 4, 4, 1],
-            [1, 1, 4, 4],
-            [4, 4, 4, 1],
-            [1, 4, 4, 4],
-            [1, 1, 4, 4],
-            [1, 1, 1, 4],
-            [4, 4, 4, 4],
-            [4, 1, 1, 1]
-          ]
-        correctCoefficients:
-          type: array
-          items:
-            type: number
-            format: double
-          minItems: 1
-          maxItems: 30
-          description: Correct coefficients array
-          example: [1.0, 0, 3.0, 0, 6.0]
-        errors:
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-              format: double
-            minItems: 1
-            maxItems: 20
-          minItems: 1
-          maxItems: 300
-          description: Errors matrix
-          example: [
-            [0.788541606954773, -0.329118400192516, -0.9942524568114388, 0.14453090647095862],
-            [1.5777291605372172, -0.4155536133030628, 1.25506651745409, -0.40948223765297903],
-            [0.8745405443882809, -0.8105631301182811, -1.5921658534929635, 0.9024856125194042],
-            [0.4116676032206691, 0.234377371371492, 1.1014416865330987, 2.0368763885917343],
-            [-0.8908512062255074, -0.5259277467960555, -0.5277014127423201, -0.13904531044831725],
-            [0.45406959839855376, -0.16148876647353905, 0.8857088533554148, 0.6251851218899985],
-            [-0.3519829765771218, -0.7699565203434863, -0.4134650554618632, -0.8256433525968532],
-            [-0.2740089312890524, -0.0412420225935336, 0.5305536687668025, 0.252516459890898],
-            [-0.40060766480268317, -0.17082774334393097, 1.4865967696768292, -1.2582772394256128],
-            [1.300877568665368, 0.25905329568401003, 0.49757580456429407, 1.0750886072421677]
-          ]
-
-    RandomNumbersMmcmlrRequestBody:
-      type: object
-      description: Request body for running multiple times modified method of CMLR with errors of random numbers
+      description: Request body for running multiple times modified method of CMLR with random variables as uniformly distributed random numbers
       required:
         - repetitionsNumberOfActiveExperiments
         - numberOfValidationSequences
@@ -320,23 +183,23 @@ components:
           maxItems: 300
           description: Independent variables matrix
           example: [
-            [4, 1, 1, 1],
-            [4, 4, 1, 1],
-            [1, 4, 4, 1],
-            [1, 1, 4, 4],
-            [4, 4, 4, 1],
-            [1, 4, 4, 4],
-            [1, 1, 4, 4],
-            [1, 1, 1, 4],
-            [4, 4, 4, 4],
-            [4, 1, 1, 1]
-          ]
+              [4, 1, 1, 1],
+              [4, 4, 1, 1],
+              [1, 4, 4, 1],
+              [1, 1, 4, 4],
+              [4, 4, 4, 1],
+              [1, 4, 4, 4],
+              [1, 1, 4, 4],
+              [1, 1, 1, 4],
+              [4, 4, 4, 4],
+              [4, 1, 1, 1]
+            ]
         range:
           $ref: "#/components/schemas/DoubleRange"
 
     NormallyDistributedRandomNumbersMmcmlrRequestBody:
       type: object
-      description: Request body for running multiple times modified method of CMLR with errors of normally distributed random numbers
+      description: Request body for running multiple times modified method of CMLR with random variable as normally distributed random numbers
       required:
         - repetitionsNumberOfActiveExperiments
         - numberOfValidationSequences
@@ -386,17 +249,17 @@ components:
           maxItems: 300
           description: Independent variables matrix
           example: [
-            [4, 1, 1, 1],
-            [4, 4, 1, 1],
-            [1, 4, 4, 1],
-            [1, 1, 4, 4],
-            [4, 4, 4, 1],
-            [1, 4, 4, 4],
-            [1, 1, 4, 4],
-            [1, 1, 1, 4],
-            [4, 4, 4, 4],
-            [4, 1, 1, 1]
-          ]
+              [4, 1, 1, 1],
+              [4, 4, 1, 1],
+              [1, 4, 4, 1],
+              [1, 1, 4, 4],
+              [4, 4, 4, 1],
+              [1, 4, 4, 4],
+              [1, 1, 4, 4],
+              [1, 1, 1, 4],
+              [4, 4, 4, 4],
+              [4, 1, 1, 1]
+            ]
         mean:
           type: number
           description: Mathematical expectation
@@ -406,34 +269,49 @@ components:
           description: Standard deviation
           example: 1
 
-    SingleRunResponse:
+    IntRandomNumbersRequestBody:
       type: object
-      description: Response for running modified method of CMLR single time
+      description: Request body for generating matrix of random integer numbers
+      required:
+        - rows
+        - columns
+        - range
       properties:
-        coefficients:
-          type: array
-          description: Result coefficients
-          items:
-            type: number
-            format: double
-          example: [1.0, 0, 3.0, 0, 6.0]
-        comparisonValueByPavlov:
-          type: number
-          description: Comparison value by Pavlov method
-          example: 0.003421
-        numberOfInitialZeroCoefficients:
+        rows:
           type: integer
-          description: Number of zero coefficients in correct coefficients vector
-          example: 3
-        numberOfCalculatedZeroCoefficients:
+          minimum: 1
+          description: Number of matrix rows
+          example: 2
+        columns:
           type: integer
-          description: Number of zero coefficients in result coefficients vector
-          example: 3
-        numberOfMismatchedZeros:
-          type: integer
-          description: Number of mismatched zeros comparing correct and result coefficients vectors
+          minimum: 1
+          description: Number of matrix columns
+          example: 2
+        range:
+          $ref: "#/components/schemas/IntRange"
 
-    MultipleRunsResponse:
+    DoubleRandomNumbersRequestBody:
+      type: object
+      description: Request body for generating matrix of random double numbers
+      required:
+        - rows
+        - columns
+        - range
+      properties:
+        rows:
+          type: integer
+          minimum: 1
+          description: Number of matrix rows
+          example: 2
+        columns:
+          type: integer
+          minimum: 1
+          description: Number of matrix columns
+          example: 2
+        range:
+          $ref: "#/components/schemas/DoubleRange"
+
+    RegressionSimulationStatisticsResponse:
       type: object
       description: Response for running modified method of CMLR multiple times
       properties:
@@ -449,8 +327,20 @@ components:
           type: number
           description: Percentage of incorrect models with 2+ incorrect zeros comparing to total number of runs
           example: 9
+        meanComparisonMeasureValueForCorrectModels:
+          type: number
+          description: Mean comparison measure value for correct models. If no correct models - returns -1
+          example: 0.01324
+        minComparisonMeasureValueForCorrectModels:
+          type: number
+          description: Min comparison measure value for correct models. If no correct models - returns -1
+          example: 0.00357
+        maxComparisonMeasureValueForCorrectModels:
+          type: number
+          description: Max comparison measure value for correct models. If no correct models - returns -1
+          example: 0.43246
 
-    BadRequestException:
+    BadRequestResponse:
       type: object
       description: Response for 400 HTTP status
       properties:
@@ -494,64 +384,3 @@ components:
           format: double
           description: End of range exclusively
           example: 10.3
-
-    IntRandomNumbersRequestBody:
-      type: object
-      description: Request body for generating matrix of random integer numbers
-      properties:
-        rows:
-          type: integer
-          minimum: 1
-          description: Number of matrix rows
-          example: 2
-        columns:
-          type: integer
-          minimum: 1
-          description: Number of matrix columns
-          example: 2
-        range:
-          $ref: "#/components/schemas/IntRange"
-
-    DoubleRandomNumbersRequestBody:
-      type: object
-      description: Request body for generating matrix of random double numbers
-      properties:
-        rows:
-          type: integer
-          minimum: 1
-          description: Number of matrix rows
-          example: 2
-        columns:
-          type: integer
-          minimum: 1
-          description: Number of matrix columns
-          example: 2
-        range:
-          $ref: "#/components/schemas/DoubleRange"
-
-
-    MatrixOfNormallyDistributedRandomNumbersRequestBody:
-      type: object
-      description: Request body for generating matrix of normally disctributed random double numbers
-      properties:
-        mean:
-          type: number
-          format: double
-          description: Mathematical expectation
-          example: 0
-        stdDev:
-          type: number
-          format: double
-          minimum: 0
-          description: Standard deviation
-          example: 1
-        rows:
-          type: integer
-          minimum: 1
-          description: Number of matrix rows
-          example: 2
-        columns:
-          type: integer
-          minimum: 1
-          description: Number of matrix columns
-          example: 2

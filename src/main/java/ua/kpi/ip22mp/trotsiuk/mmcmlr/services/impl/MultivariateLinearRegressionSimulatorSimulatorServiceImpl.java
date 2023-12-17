@@ -5,7 +5,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.springframework.stereotype.Service;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationStatisticsDto;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionSimulationStatisticsDto;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionSimulatorService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.RandomNumbersService;
@@ -31,7 +31,7 @@ public class MultivariateLinearRegressionSimulatorSimulatorServiceImpl implement
     }
 
     @Override
-    public RegressionCalculationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithUniformlyDistributedRandomNumbers(
+    public RegressionSimulationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithUniformlyDistributedRandomNumbers(
             int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, int numberOfRuns,
             double[] correctCoefficients, double[][] independentVariables, double start, double end) {
         RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
@@ -76,7 +76,7 @@ public class MultivariateLinearRegressionSimulatorSimulatorServiceImpl implement
             }
         }
 
-        return new RegressionCalculationStatisticsDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
+        return new RegressionSimulationStatisticsDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
                 calculatePercentage(countOfIncorrectModelsWithOneIncorrectZero, numberOfRuns),
                 calculatePercentage(countOfIncorrectModelsWithTwoPlusIncorrectZeros, numberOfRuns),
                 totalComparisonMeasureValueForCorrectModels / numberOfRuns,
@@ -84,7 +84,7 @@ public class MultivariateLinearRegressionSimulatorSimulatorServiceImpl implement
     }
 
     @Override
-    public RegressionCalculationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
+    public RegressionSimulationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
             int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, int numberOfRuns,
             double[] correctCoefficients, double[][] independentVariables, double mean, double stdDev) {
         RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
@@ -129,7 +129,7 @@ public class MultivariateLinearRegressionSimulatorSimulatorServiceImpl implement
             }
         }
 
-        return new RegressionCalculationStatisticsDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
+        return new RegressionSimulationStatisticsDto(calculatePercentage(countOfCorrectModels, numberOfRuns),
                 calculatePercentage(countOfIncorrectModelsWithOneIncorrectZero, numberOfRuns),
                 calculatePercentage(countOfIncorrectModelsWithTwoPlusIncorrectZeros, numberOfRuns),
                 totalComparisonMeasureValueForCorrectModels / numberOfRuns,

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationStatisticsDto;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionSimulationStatisticsDto;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.NormallyDistributedRandomNumbersMmcmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.requests.UniformlyDistributedRandomNumbersMmcmlrRequestBody;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionSimulatorService;
@@ -36,7 +36,7 @@ public class MultivariateLinearRegressionController {
 
 
     @PostMapping("/modified-method-of-cmlr/uniformly-distributed-random-numbers")
-    public RegressionCalculationStatisticsDto solveWithModifiedMethodOfCmlrForUniformlyDistributedRandomNumbersForRandomVariables(
+    public RegressionSimulationStatisticsDto solveWithModifiedMethodOfCmlrWithRandomVariablesAsUniformlyDistributedRandomNumbers(
             @Valid @RequestBody UniformlyDistributedRandomNumbersMmcmlrRequestBody body, BindingResult bindingResult) throws BindException {
         uniformlyDistributedRandomNumbersMmcmlrRequestBodyValidator.validate(body, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -51,7 +51,7 @@ public class MultivariateLinearRegressionController {
     }
 
     @PostMapping("/modified-method-of-cmlr/normally-distributed-random-numbers")
-    public RegressionCalculationStatisticsDto solveWithModifiedMethodOfCmlrForNormallyDistributedRandomNumbersForRandomVariables(
+    public RegressionSimulationStatisticsDto solveWithModifiedMethodOfCmlrWithRandomVariablesAsNormallyDistributedRandomNumbers(
             @Valid @RequestBody NormallyDistributedRandomNumbersMmcmlrRequestBody body, BindingResult bindingResult) throws BindException {
         normallyDistributedRandomNumbersMmcmlrRequestBodyValidator.validate(body, bindingResult);
         if (bindingResult.hasErrors()) {

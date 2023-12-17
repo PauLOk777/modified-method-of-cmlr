@@ -20,13 +20,15 @@ public class RandomNumbersController {
     }
 
     @PostMapping("/uniformly-distribution/int/matrix")
-    public int[][] getMatrixOfRandomIntNumbers(@Valid @RequestBody UniformlyDistributedIntRandomNumbersRequestBody body) {
+    public int[][] generateMatrixOfUniformlyDistributedIntRandomNumbers(
+            @Valid @RequestBody UniformlyDistributedIntRandomNumbersRequestBody body) {
         return randomNumbersService.generateMatrixOfUniformlyDistributedIntRandomNumbers(
                 body.rows(), body.columns(), body.range().start(), body.range().end());
     }
 
     @PostMapping("/uniformly-distribution/double/matrix")
-    public double[][] getMatrixOfRandomDoubleNumbers(@Valid @RequestBody UniformlyDistributedDoubleRandomNumbersRequestBody body) {
+    public double[][] generateMatrixOfUniformlyDistributedDoubleRandomNumbers(
+            @Valid @RequestBody UniformlyDistributedDoubleRandomNumbersRequestBody body) {
         return randomNumbersService.generateMatrixOfUniformlyDistributedDoubleRandomNumbers(
                 body.rows(), body.columns(), body.range().start(), body.range().end());
     }

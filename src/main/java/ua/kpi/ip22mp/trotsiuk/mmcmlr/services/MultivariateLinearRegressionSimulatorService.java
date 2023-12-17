@@ -1,15 +1,15 @@
 package ua.kpi.ip22mp.trotsiuk.mmcmlr.services;
 
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationStatisticsDto;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionSimulationStatisticsDto;
 
 public interface MultivariateLinearRegressionSimulatorService {
 
-    RegressionCalculationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithUniformlyDistributedRandomNumbers(
+    RegressionSimulationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithUniformlyDistributedRandomNumbers(
             int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, int numberOfRuns,
             double[] correctCoefficients, double[][] independentVariables, double start, double end
     );
 
-    RegressionCalculationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
+    RegressionSimulationStatisticsDto simulateMultipleTimesModifiedMethodOfCmlrWithNormallyDistributedRandomNumbers(
             int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, int numberOfRuns,
             double[] correctCoefficients, double[][] independentVariables, double mean, double stdDev
     );
