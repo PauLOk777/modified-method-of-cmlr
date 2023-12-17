@@ -11,13 +11,13 @@ public class RandomNumbersServiceImpl implements RandomNumbersService {
 
     private final Random random = new Random();
 
-    public int[][] generateRandomIntNumbersInMatrix(int rows, int columns, int start, int end) {
+    public int[][] generateMatrixOfUniformlyDistributedIntRandomNumbers(int rows, int columns, int start, int end) {
         return Stream.generate(() -> random.ints(columns, start, end).toArray())
                 .limit(rows)
                 .toArray(int[][]::new);
     }
 
-    public double[][] generateRandomDoubleNumbersInMatrix(int rows, int columns, double start, double end) {
+    public double[][] generateMatrixOfUniformlyDistributedDoubleRandomNumbers(int rows, int columns, double start, double end) {
         return Stream.generate(() -> random.doubles(columns, start, end).toArray())
                 .limit(rows)
                 .toArray(double[][]::new);

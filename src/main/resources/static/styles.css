@@ -169,15 +169,6 @@ th, td {
   left: 21px;
 }
 
-.link-wrapper {
-    margin-bottom: 40px;
-}
-
-.link {
-    color: black;
-    font-size: 20px;
-}
-
 @media (min-width: 1200px) {
     input[type="number"],
     input[type="text"]

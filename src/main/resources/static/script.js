@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const percentageOfCorrectModelsSpan = document.getElementById("percentageOfCorrectModels");
     const percentageOfIncorrectModelsWithOneIncorrectZeroSpan = document.getElementById("percentageOfIncorrectModelsWithOneIncorrectZero");
     const percentageOfIncorrectModelsWithTwoPlusIncorrectZerosSpan = document.getElementById("percentageOfIncorrectModelsWithTwoPlusIncorrectZeros");
+    const meanComparisonMeasureValueForCorrectModelsSpan = document.getElementById("meanComparisonMeasureValueForCorrectModels");
+    const minComparisonMeasureValueForCorrectModelsSpan = document.getElementById("minComparisonMeasureValueForCorrectModels");
+    const maxComparisonMeasureValueForCorrectModelsSpan = document.getElementById("maxComparisonMeasureValueForCorrectModels");
     const copyCoefficientsButton = document.getElementById("copyCoefficients");
     const copyIndependentVariablesButton = document.getElementById("copyIndependentVariables");
     const importJsonMatrixForCoefficientsButton = document.getElementById("importJsonMatrixForCoefficients");
@@ -230,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
             rows,
             columns
         };
-        fetch(`/random-numbers/${dataType}/matrix`, {
+        fetch(`/random-numbers/uniformly-distribution/${dataType}/matrix`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -274,44 +277,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (isNaN(repetitionsNumberOfActiveExperiments) || isNaN(numberOfValidationSequences) ||
                 numberOfRuns < 1 || !validateTablesInputs()) {
-            alert('Please fill in check for correctness all fields.');
+            alert('Please check for correctness all fields.');
             return;
         }
 
         const independentVariables = getDataFromTable("independentVariablesTable");
         const correctCoefficients = getDataFromTable("coefficientsTable")[0];
-        const multipleRunsPathSuffix = typeOfErrorsGenerationSwitch.checked
-                        ? "/multiple-runs/normally-distributed-random-numbers"
-                        : "/multiple-runs/random-numbers";
+        const pathSuffix = typeOfErrorsGenerationSwitch.checked
+                        ? "/normally-distributed-random-numbers"
+                        : "/uniformly-distributed-random-numbers";
 
-        let requestData;
+        const requestData = {
+            repetitionsNumberOfActiveExperiments,
+            numberOfValidationSequences,
+            numberOfRuns,
+            correctCoefficients,
+            independentVariables
+        };
+
         if (typeOfErrorsGenerationSwitch.checked) {
             const mean = parseFloat(meanInputErrors.value);
-            const stdDev =  parseFloat(stdDevInputErrors.value);
-            requestData = {
-                repetitionsNumberOfActiveExperiments,
-                numberOfValidationSequences,
-                numberOfRuns,
-                correctCoefficients,
-                independentVariables,
-                mean,
-                stdDev
-            };
+            const stdDev = parseFloat(stdDevInputErrors.value);
+            if (isNaN(mean) || isNaN(stdDev)) {
+                alert('Please check for correctness parameters for normal distribution.');
+                return;
+            }
+
+            requestData.mean = parseFloat(meanInputErrors.value);
+            requestData.stdDev = parseFloat(stdDevInputErrors.value);
         } else {
             const start = parseFloat(startRangeInputErrors.value);
             const end = parseFloat(endRangeInputErrors.value);
-            requestData = {
-                repetitionsNumberOfActiveExperiments,
-                numberOfValidationSequences,
-                numberOfRuns,
-                correctCoefficients,
-                independentVariables,
-                range: { start, end }
-            };
+            if (isNaN(start) || isNaN(end)) {
+                alert('Please check for correctness parameters for uniformly distribution.');
+                return;
+            }
+
+            requestData.range = {};
+            requestData.range.start = parseFloat(startRangeInputErrors.value);
+            requestData.range.end = parseFloat(endRangeInputErrors.value);
         }
 
 
-        fetch("/multivariate-linear-regression/modified-method-of-cmlr" + multipleRunsPathSuffix, {
+        fetch("/multivariate-linear-regression/modified-method-of-cmlr" + pathSuffix, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -330,6 +338,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 percentageOfCorrectModelsSpan.innerHTML = data.percentageOfCorrectModels;
                 percentageOfIncorrectModelsWithOneIncorrectZeroSpan.innerHTML = data.percentageOfIncorrectModelsWithOneIncorrectZero;
                 percentageOfIncorrectModelsWithTwoPlusIncorrectZerosSpan.innerHTML = data.percentageOfIncorrectModelsWithTwoPlusIncorrectZeros;
+                meanComparisonMeasureValueForCorrectModelsSpan.innerHTML = data.meanComparisonMeasureValueForCorrectModels
+                if (data.minComparisonMeasureValue == -1) {
+                    minComparisonMeasureValueForCorrectModelsSpan.innerHTML = "no correct models";
+                    maxComparisonMeasureValueForCorrectModelsSpan.innerHTML = "no correct models";
+                } else {
+                    minComparisonMeasureValueForCorrectModelsSpan.innerHTML = data.minComparisonMeasureValueForCorrectModels;
+                    maxComparisonMeasureValueForCorrectModelsSpan.innerHTML = data.maxComparisonMeasureValueForCorrectModels;
+                }
+
                 document.getElementById("resultsGroup").classList.remove("hidden");
                 window.scrollTo(0, document.body.scrollHeight);
             } else {

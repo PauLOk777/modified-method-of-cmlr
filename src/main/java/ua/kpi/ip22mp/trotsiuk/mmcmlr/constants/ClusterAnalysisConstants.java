@@ -6,6 +6,6 @@ public final class ClusterAnalysisConstants {
 
     }
 
-    public static final int CLUSTER_M1_MODIFIED_METHOD = 0;
-    public static final int CLUSTER_M2_MODIFIED_METHOD = 1;
+    public static final String CLUSTER_M1_NAME = "M1";
+    public static final String CLUSTER_M2_NAME = "M2";
 }

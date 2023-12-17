@@ -1,10 +1,10 @@
 package ua.kpi.ip22mp.trotsiuk.mmcmlr.services;
 
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationDto;
+import org.apache.commons.math3.linear.RealMatrix;
 
 public interface MultivariateLinearRegressionService {
 
-    RegressionCalculationDto solveRegressionWithModifiedMethodOfCmlr(
-            int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, double[][] independentVariables,
-            double[] correctCoefficients, double[][] errors);
+    double[] solveRegressionWithModifiedMethodOfCmlr(
+            RealMatrix dependentVariablesGroups, RealMatrix independentVariables,
+            int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences);
 }

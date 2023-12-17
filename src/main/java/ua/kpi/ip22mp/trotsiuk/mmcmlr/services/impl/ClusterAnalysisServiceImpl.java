@@ -6,12 +6,13 @@ import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SequencedMap;
 
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toMap;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M1_NAME;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M2_NAME;
 
 @Service
 public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
@@ -20,7 +21,7 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
     private int maxNumberOfElementsInM2Cluster;
 
     @Override
-    public List<Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients) {
+    public Map<String, Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients) {
         SequencedMap<Integer, Double> coefficientsSortedByModule =
                 sortCoefficientsMapByModule(createMapWithIncrementKeys(coefficients));
 
@@ -51,7 +52,10 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, HashMap::new));
         }
 
-        return List.of(m1, m2);
+        Map<String, Map<Integer, Double>> clusters = new HashMap<>();
+        clusters.put(CLUSTER_M1_NAME, m1);
+        clusters.put(CLUSTER_M2_NAME, m2);
+        return clusters;
     }
 
     private Map<Integer, Double> createMapWithIncrementKeys(double[] array) {

@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLR Construction</title>
+    <title>MLR Simulation</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,9 +13,7 @@
     </div>
 
     <div class="width-limited">
-        <div class="link-wrapper">
-            <a class="link" href="/">Single Run</a>
-        </div>
+        <h1>Simulation of Modified Method For Constructing Multivariate Linear Regression</h1>
 
         <div class="input-group">
             <label for="numIndependentVariables">Number of Independent Variables</label>
@@ -130,6 +128,15 @@
         <h3>% Percentage of incorrect models with 2+ incorrect zeros:
             <span id="percentageOfIncorrectModelsWithTwoPlusIncorrectZeros"></span>
         </h3>
+        <h3>Mean comparison measure value for correct models:
+            <span id="meanComparisonMeasureValueForCorrectModels"></span>
+        </h3>
+        <h3>Minimum comparison measure value for correct models:
+            <span id="minComparisonMeasureValueForCorrectModels"></span>
+        </h3>
+        <h3>Maximum comparison measure value for correct models:
+            <span id="maxComparisonMeasureValueForCorrectModels"></span>
+        </h3>
     </div>
 
     <div class="width-limited">
@@ -138,6 +145,6 @@
         </button>
     </div>
 </div>
-<script src="multipleRunsScript.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers;
+package ua.kpi.ip22mp.trotsiuk.mmcmlr.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

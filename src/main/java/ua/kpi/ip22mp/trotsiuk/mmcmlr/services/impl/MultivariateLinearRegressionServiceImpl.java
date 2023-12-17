@@ -6,11 +6,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.dto.RegressionCalculationDto;
-import ua.kpi.ip22mp.trotsiuk.mmcmlr.helpers.CombinationsGenerator;
+import ua.kpi.ip22mp.trotsiuk.mmcmlr.util.CombinationsGenerator;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.ClusterAnalysisService;
 import ua.kpi.ip22mp.trotsiuk.mmcmlr.services.MultivariateLinearRegressionService;
 
@@ -18,11 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.math3.linear.MatrixUtils.inverse;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M1_MODIFIED_METHOD;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M2_MODIFIED_METHOD;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.compareVectorsByPavlov;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfMissingZeros;
-import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfZerosInArray;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M1_NAME;
+import static ua.kpi.ip22mp.trotsiuk.mmcmlr.constants.ClusterAnalysisConstants.CLUSTER_M2_NAME;
 
 @Service
 public class MultivariateLinearRegressionServiceImpl implements MultivariateLinearRegressionService {
@@ -34,34 +29,27 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
 
     private final ClusterAnalysisService clusterAnalysisService;
 
-    @Autowired
     public MultivariateLinearRegressionServiceImpl(ClusterAnalysisService clusterAnalysisService) {
         this.clusterAnalysisService = clusterAnalysisService;
     }
 
     @Override
-    public RegressionCalculationDto solveRegressionWithModifiedMethodOfCmlr(
-            int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences, double[][] independentVariables,
-            double[] correctCoefficients, double[][] errors) {
-        RealMatrix independentVariablesMatrix = new Array2DRowRealMatrix(independentVariables);
-        RealMatrix errorsMatrix = new Array2DRowRealMatrix(errors);
-        RealVector dependentVariables =
-                calculateDependentVariables(independentVariablesMatrix, correctCoefficients);
-        RealMatrix adjustedInitialDependentVariables =
-                adjustDependentVariables(dependentVariables, errorsMatrix, 0, repetitionsNumberOfActiveExperiments);
-        RealMatrix adjustedValidationDependentVariables = adjustDependentVariables(
-                dependentVariables, errorsMatrix, repetitionsNumberOfActiveExperiments,
-                repetitionsNumberOfActiveExperiments + numberOfValidationSequences);
-        RealMatrix adjustedDependentVariables = adjustDependentVariables(
-                dependentVariables, errorsMatrix, 0,
-                repetitionsNumberOfActiveExperiments + numberOfValidationSequences);
-        RealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariablesMatrix);
+    public double[] solveRegressionWithModifiedMethodOfCmlr(
+            RealMatrix dependentVariablesGroups, RealMatrix independentVariables,
+            int repetitionsNumberOfActiveExperiments, int numberOfValidationSequences) {
+        int numberOfExperiments = dependentVariablesGroups.getRowDimension();
+        RealMatrix adjustedInitialDependentVariables = dependentVariablesGroups
+                .getSubMatrix(0, numberOfExperiments - 1, 0, repetitionsNumberOfActiveExperiments - 1);
+        RealMatrix adjustedValidationDependentVariables = dependentVariablesGroups
+                .getSubMatrix(0, numberOfExperiments - 1, repetitionsNumberOfActiveExperiments,
+                        repetitionsNumberOfActiveExperiments + numberOfValidationSequences - 1);
+        RealMatrix designMatrixWithAllIndependentVariables = createDesignMatrix(independentVariables);
         RealVector meanOfInitialDependentVariables = meanOfMatrixColumns(adjustedInitialDependentVariables);
-        RealVector meanOfAllDependentVariables = meanOfMatrixColumns(adjustedDependentVariables);
+        RealVector meanOfAllDependentVariables = meanOfMatrixColumns(dependentVariablesGroups);
 
         RealVector initialResults = solveRegressionWithLeastSquaresMethod(
                 designMatrixWithAllIndependentVariables, meanOfInitialDependentVariables);
-        List<Map<Integer, Double>> clusters =
+        Map<String, Map<Integer, Double>> clusters =
                 clusterAnalysisService.provideClustersByModifiedMethod(initialResults.toArray());
 
         if (LOGGER.isDebugEnabled()) {
@@ -93,44 +81,9 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         RealMatrix resultDesignMatrix =
                 getPartialDescriptionDesignMatrix(resultPartialDescription, designMatrixWithAllIndependentVariables);
 
-        RealVector resultCoefficients = constructCoefficientsArrayForPartialDescription(
-                resultPartialDescription,
+        return constructCoefficientsArrayForPartialDescription(resultPartialDescription,
                 solveRegressionWithLeastSquaresMethod(resultDesignMatrix, meanOfAllDependentVariables),
-                designMatrixWithAllIndependentVariables.getColumnDimension()
-        );
-        return new RegressionCalculationDto(resultCoefficients.toArray(),
-                compareVectorsByPavlov(resultCoefficients, new ArrayRealVector(correctCoefficients)),
-                getNumberOfZerosInArray(correctCoefficients), getNumberOfZerosInArray(resultCoefficients.toArray()),
-                getNumberOfMissingZeros(correctCoefficients, resultCoefficients.toArray()));
-    }
-
-    private RealVector calculateDependentVariables(
-            RealMatrix independentVariables, double[] correctCoefficients) {
-        RealVector dependentVariables = new ArrayRealVector(independentVariables.getRowDimension());
-
-        for (int i = 0; i < dependentVariables.getDimension(); i++) {
-            double dependentVariable = correctCoefficients[0];
-
-            for (int j = 0; j < independentVariables.getColumnDimension(); j++) {
-                dependentVariable += correctCoefficients[j + 1] * independentVariables.getEntry(i, j);
-            }
-
-            dependentVariables.setEntry(i, dependentVariable);
-        }
-
-        return dependentVariables;
-    }
-
-    private RealMatrix adjustDependentVariables(
-            RealVector dependentVariables, RealMatrix errors, int start, int end) {
-        RealMatrix adjustedDependentVariables =
-                new Array2DRowRealMatrix(dependentVariables.getDimension(), end - start);
-
-        for (int i = 0; i < end - start; i++) {
-            adjustedDependentVariables.setColumnVector(i, dependentVariables.add(errors.getColumnVector(start + i)));
-        }
-
-        return adjustedDependentVariables;
+                designMatrixWithAllIndependentVariables.getColumnDimension()).toArray();
     }
 
     private RealMatrix createDesignMatrix(RealMatrix independentVariables) {
@@ -158,10 +111,10 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
     }
 
     private List<Map<Integer, Double>> generatePartialDescriptions(
-            List<Map<Integer, Double>> clusters, RealVector meanOfDependentVariables, RealMatrix designMatrix) {
+            Map<String, Map<Integer, Double>> clusters, RealVector meanOfDependentVariables, RealMatrix designMatrix) {
         List<Map<Integer, Double>> partialDescriptions =
-                CombinationsGenerator.generateValuesCombinations(clusters.get(CLUSTER_M2_MODIFIED_METHOD));
-        partialDescriptions.forEach(map -> map.putAll(clusters.get(CLUSTER_M1_MODIFIED_METHOD)));
+                CombinationsGenerator.generateValuesCombinations(clusters.get(CLUSTER_M2_NAME));
+        partialDescriptions.forEach(map -> map.putAll(clusters.get(CLUSTER_M1_NAME)));
         List<RealMatrix> partialDescriptionsDesignMatrices =
                 getPartialDescriptionsDesignMatrices(partialDescriptions, designMatrix);
         updatePartialDescriptionsWithCorrectCoefficients(partialDescriptions, partialDescriptionsDesignMatrices,
@@ -316,9 +269,9 @@ public class MultivariateLinearRegressionServiceImpl implements MultivariateLine
         return fullVectorOfCoefficients;
     }
 
-    private void displayClusters(List<Map<Integer, Double>> clusters) {
-        LOGGER.debug("Cluster M1: {}", clusters.get(CLUSTER_M1_MODIFIED_METHOD));
-        LOGGER.debug("Cluster M2: {}", clusters.get(CLUSTER_M2_MODIFIED_METHOD));
+    private void displayClusters(Map<String, Map<Integer, Double>> clusters) {
+        LOGGER.debug("Cluster M1: {}", clusters.get(CLUSTER_M1_NAME));
+        LOGGER.debug("Cluster M2: {}", clusters.get(CLUSTER_M2_NAME));
     }
 
     private void displayPartialDescriptionsAndTheirRss(List<Map<Integer, Double>> partialDescriptions,
