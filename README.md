@@ -1,4 +1,3 @@
-# Starting the application
+# Starting the application from project root
 
-### Linux: **./mvnw spring-boot:run**
-### Windows: **mvnw spring-boot:run**
+### **./mvnw spring-boot:run**
