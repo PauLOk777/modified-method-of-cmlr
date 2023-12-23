@@ -16,14 +16,14 @@ import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.calculateComparison
 import static ua.kpi.ip22mp.trotsiuk.mmcmlr.util.VectorUtils.getNumberOfMissingZeros;
 
 @Service
-public class MultivariateLinearRegressionSimulatorSimulatorServiceImpl implements MultivariateLinearRegressionSimulatorService {
+public class MultivariateLinearRegressionSimulatorServiceImpl implements MultivariateLinearRegressionSimulatorService {
 
     private static final int PERCENTAGE_SCALE = 2;
 
     private final MultivariateLinearRegressionService multivariateLinearRegressionService;
     private final RandomNumbersService randomNumbersService;
 
-    public MultivariateLinearRegressionSimulatorSimulatorServiceImpl(
+    public MultivariateLinearRegressionSimulatorServiceImpl(
             MultivariateLinearRegressionService multivariateLinearRegressionService,
             RandomNumbersService randomNumbersService) {
         this.multivariateLinearRegressionService = multivariateLinearRegressionService;
