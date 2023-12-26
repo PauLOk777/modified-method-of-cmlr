@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SequencedMap;
+import java.util.function.ToDoubleFunction;
 
 import static java.util.Comparator.comparingDouble;
 import static java.util.stream.Collectors.toMap;
@@ -23,7 +24,7 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
     @Override
     public Map<String, Map<Integer, Double>> provideClustersByModifiedMethod(double[] coefficients) {
         SequencedMap<Integer, Double> coefficientsSortedByModule =
-                sortCoefficientsMapByModule(createMapWithIncrementKeys(coefficients));
+                sortMap(createMapWithIncrementKeys(coefficients), entry -> -Math.abs(entry.getValue()));
 
         Map<Integer, Double> m1 = new HashMap<>();
         Map.Entry<Integer, Double> firstEntry = coefficientsSortedByModule.pollFirstEntry();
@@ -46,10 +47,17 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
         }
 
         if (m2.size() > maxNumberOfElementsInM2Cluster) {
-            m2 = m2.entrySet().stream()
-                    .sorted(comparingDouble(entry -> -Math.abs(entry.getValue())))
-                    .limit(maxNumberOfElementsInM2Cluster)
-                    .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, HashMap::new));
+            Map<Integer, Double> sortedM2 = sortMap(m2, entry -> Math.abs(entry.getValue()));
+            m2.clear();
+            int i = 0;
+            for (Map.Entry<Integer, Double> entry : sortedM2.entrySet()) {
+                if (i < maxNumberOfElementsInM2Cluster) {
+                    m2.put(entry.getKey(), entry.getValue());
+                } else {
+                    m1.put(entry.getKey(), entry.getValue());
+                }
+                i++;
+            }
         }
 
         Map<String, Map<Integer, Double>> clusters = new HashMap<>();
@@ -68,10 +76,11 @@ public class ClusterAnalysisServiceImpl implements ClusterAnalysisService {
         return map;
     }
 
-    private SequencedMap<Integer, Double> sortCoefficientsMapByModule(Map<Integer, Double> coefficients) {
+    private SequencedMap<Integer, Double> sortMap(
+            Map<Integer, Double> coefficients, ToDoubleFunction<? super Map.Entry<Integer, Double>> keyExtractor) {
         return coefficients.entrySet()
                 .stream()
-                .sorted(comparingDouble(entry -> -Math.abs(entry.getValue())))
+                .sorted(comparingDouble(keyExtractor))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 }
